@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm({
@@ -24,7 +24,12 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ถ้ามี ?redirect=/xxx จะพาไปที่นั่น ไม่งั้นกลับหน้าแรก /
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,10 +43,11 @@ export function LoginForm({
         password,
       });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+
+      // กลับไปหน้า page.tsx หลัก หรือเส้นทางใน redirectTo
+      router.replace(redirectTo);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -66,8 +72,10 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
               <div className="grid gap-2">
@@ -84,8 +92,10 @@ export function LoginForm({
                   id="password"
                   type="password"
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
@@ -94,7 +104,7 @@ export function LoginForm({
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
+              Don&apos;t have an account{" "}
               <Link
                 href="/auth/sign-up"
                 className="underline underline-offset-4"
