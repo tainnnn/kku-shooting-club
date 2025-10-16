@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --radius: 0.5rem; /* ทำให้ทุก component มีขอบโค้ง (8px) */
+  }
+
+  @layer base {
+    /* ปรับสไตล์พื้นฐานของ input ทั่วระบบ */
+    input, textarea, select {
+      @apply rounded-lg ;
+    }
+  }
