@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -49,25 +48,36 @@ export function SignUpForm({
       });
       if (error) throw error;
       router.push("/auth/sign-up-success");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div
+      className={cn(
+        "flex min-h-screen items-center justify-center bg-white text-black",
+        className
+      )}
+      {...props}
+    >
+      <Card className="w-full max-w-sm rounded-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <CardTitle className="text-gray-800 text-4xl text-center mt-1 mb-1">
+            Sign up
+          </CardTitle>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSignUp}>
             <div className="flex flex-col gap-6">
+              {/* Email */}
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-gray-800">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -75,38 +85,54 @@ export function SignUpForm({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="!rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
                 />
               </div>
+
+              {/* Password */}
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
+                <Label htmlFor="password" className="text-gray-800">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="!rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
                 />
               </div>
+
+              {/* Repeat Password */}
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
-                </div>
+                <Label htmlFor="repeat-password" className="text-gray-800">
+                  Confirm Password
+                </Label>
                 <Input
                   id="repeat-password"
                   type="password"
                   required
                   value={repeatPassword}
                   onChange={(e) => setRepeatPassword(e.target.value)}
+                  className="!rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
                 />
               </div>
+
+              {/* Error */}
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
+
+              {/* Submit Button (เหมือนหน้า Login) */}
+              <Button
+                type="submit"
+                className="w-full border-2 border-gray-800 bg-gray-800 text-white hover:bg-white hover:text-gray-800 hover:border-gray-800 transition-colors"
+                disabled={isLoading}
+              >
                 {isLoading ? "Creating an account..." : "Sign up"}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
+
+            <div className="mt-4 text-center text-sm text-gray-800">
               Already have an account?{" "}
               <Link href="/auth/login" className="underline underline-offset-4">
                 Login
