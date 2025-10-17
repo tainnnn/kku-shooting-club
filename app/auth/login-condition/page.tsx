@@ -1,9 +1,9 @@
 'use client'
 
- import Image from "next/image";
- import kku_logo from './kku-logo-with-text-th-en.png';
- import google_logo from './google-logo.png';
- import Link from "next/link";
+import Image from "next/image";
+import kku_logo from './kku-logo-with-text-th-en.png';
+import google_logo from './google-logo.png';
+import Link from "next/link";
 
 
 export default function Page() {
