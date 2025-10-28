@@ -49,7 +49,7 @@ export default function Page() {
 
           {/* Log in Admin */}
           <Link
-            href="/auth/login-admin"
+            href="/auth/login"
             className="mb-12 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow md:text-base max-w-sm"
             >
             Log in Admin
