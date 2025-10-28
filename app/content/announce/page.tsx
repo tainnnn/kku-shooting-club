@@ -19,10 +19,10 @@ function Announce() {
 
   return (
     <>
-      <div className="flex justify-start items-start mx-5 mt-2 text-black text-2xl">
+      <div className="flex justify-start items-start mx-8 mt-3 mb-1 text-black text-2xl">
         ประกาศ
       </div>
-      <div className="bg-gray-200 mx-3 mt-2 rounded-md p-2">
+      <div className="bg-gray-200 mx-5 mt-2 rounded-md p-2">
         {announcements.map((item, index) => (
           <div
             key={index}
@@ -31,7 +31,7 @@ function Announce() {
             <span>
               {item.title} / ({item.date})
             </span>
-            <button className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-blue-400 hover:to-blue-500">
+            <button className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-blue-400 hover:bg-blue-500">
               รายละเอียด
             </button>
           </div>
