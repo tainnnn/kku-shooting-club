@@ -19,10 +19,10 @@ function Navbar() {
         <div className="hidden md:flex items-center w-full text-sm md:text-lg">
             <div className="flex gap-5 items-center">
             <Link href="/" className='mx-2'>ประกาศ</Link>
-            <Link href="/complist" className='mx-2'>รายการแข่งขัน</Link>
-            <Link href="/myreg" className='mx-2'>ใบสมัครของฉัน</Link>
-            <Link href="/compresult" className='mx-2'>ผลการแข่งขัน</Link>
-            <Link href="/contact" className='mx-2'>ติดต่อ</Link>
+            <Link href="/content/complist" className='mx-2'>รายการแข่งขัน</Link>
+            <Link href="/content/myreg" className='mx-2'>ใบสมัครของฉัน</Link>
+            <Link href="/content/compresult" className='mx-2'>ผลการแข่งขัน</Link>
+            <Link href="/content/contact" className='mx-2'>ติดต่อ</Link>
             </div>
             <div className="ml-auto">
             <AuthButton />
@@ -46,10 +46,10 @@ function Navbar() {
             className="absolute right-5 top-full mt-1 md:hidden flex flex-col items-start bg-white border border-gray-200 rounded-lg shadow-md py-4 px-6 space-y-3 text-base z-50"
         >
             <Link href="/" onClick={() => setMenuOpen(false)}>ประกาศ</Link>
-            <Link href="/complist" onClick={() => setMenuOpen(false)}>รายการแข่งขัน</Link>
-            <Link href="/myreg" onClick={() => setMenuOpen(false)}>ใบสมัครของฉัน</Link>
-            <Link href="/compresult" onClick={() => setMenuOpen(false)}>ผลการแข่งขัน</Link>
-            <Link href="/contact" onClick={() => setMenuOpen(false)}>ติดต่อ</Link>
+            <Link href="/content/complist" onClick={() => setMenuOpen(false)}>รายการแข่งขัน</Link>
+            <Link href="/content/myreg" onClick={() => setMenuOpen(false)}>ใบสมัครของฉัน</Link>
+            <Link href="/content/compresult" onClick={() => setMenuOpen(false)}>ผลการแข่งขัน</Link>
+            <Link href="/content/contact" onClick={() => setMenuOpen(false)}>ติดต่อ</Link>
             <AuthButton />
         </div>
         )}
