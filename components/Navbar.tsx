@@ -4,15 +4,30 @@ import React, { useState } from 'react'
 import { AuthButton } from './auth-button'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import Image from "next/image";
+import logo from "@/components/pic/kku-shooting-club-logo.png";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false)
 
     return (
     <>
-    <div className="flex justify-center items-center h-36 bg-red-900 w-full text-xl md:text-5xl text-white font-semibold">
-        KKU OPEN SHOOTING CLUB
+    <div className="flex items-center justify-center h-36 w-full bg-red-900 text-white">
+        <div className="flex items-center gap-4 md:gap-6">
+            <Image
+            src={logo}
+            alt="KKU Shooting Club Logo"
+            className="h-[120px] w-auto md:h-[120px] lg:h-[120px] object-contain select-none"
+            priority
+            />
+            <span className="whitespace-nowrap font-semibold text-2xl md:text-4xl lg:text-5xl">
+            KKU OPEN SHOOTING CLUB
+            </span>
+        </div>
     </div>
+
+
+
 
     <nav className="relative w-full border-b border-b-foreground/10 bg-white text-black">
         <div className="w-full max-w-5xl mx-auto flex items-center p-3 px-5 h-16">
