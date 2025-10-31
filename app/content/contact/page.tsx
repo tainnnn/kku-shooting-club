@@ -10,8 +10,8 @@ function Contact() {
             <Navbar />
 
             <div className="bg-gray-200 mx-5 my-5 rounded-md p-2 flex-auto flex flex-col justify-center items-center text-center text-xl">
-                <div className="text-black text-[150px] mb-2">
-                    ติดต่อเนฟวี่
+                <div className="text-gray-400 mb-2">
+                    ติดต่อ
                 </div>
             </div>
         </div>

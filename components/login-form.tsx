@@ -79,7 +79,7 @@ export function LoginForm({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                  className="!rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
+                //   className="!rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
                 />
               </div>
               <div className="grid gap-2">
