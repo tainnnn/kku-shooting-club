@@ -38,7 +38,7 @@ export function AuthButton() {
 
   return user ? (
     <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 w-full md:w-auto mb-3">
-      <Button asChild variant="link" size="sm" className="px-0">
+      <Button asChild variant="link" size="lg" className="px-0">
         <Link href="/content/profile" aria-label="ไปที่หน้าบัญชีผู้ใช้">
           {user.email}
         </Link>
