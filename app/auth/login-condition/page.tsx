@@ -27,7 +27,7 @@ export default function Page() {
           {/* Continue with Google */}
             <Link
             href="/auth/login"
-            className="mb-10 inline-flex w-full max-w-sm items-center justify-center gap-3 rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow md:text-base"
+            className="mb-10 inline-flex w-full max-w-sm items-center justify-center gap-3 rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.05)] md:text-base"
             >
               <Image
                 src={google_logo}
@@ -50,7 +50,7 @@ export default function Page() {
           {/* Log in Admin */}
           <Link
             href="/auth/login"
-            className="mb-12 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow md:text-base max-w-sm"
+            className="mb-12 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.05)] md:text-base max-w-sm"
             >
             Log in Admin
             </Link>
