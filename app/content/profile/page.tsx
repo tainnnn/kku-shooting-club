@@ -6,26 +6,25 @@ import Navbar from '@/components/Navbar';
 import { createClient } from '@/lib/supabase/client';
 
 type ProfileData = {
-  // เติม/แก้ field ให้ตรง schema จริงได้เลย
   full_name?: string | null;
-  student_id?: string | null;
-  year_level?: string | number | null;
-  faculty?: string | null;
-  major?: string | null;
-  kku_mail?: string | null;
+  student_id?: string | null; // รหัสนักศึกษา
+  year?: string | number | null;      // ชั้นปี
+  faculty?: string | null;     // คณะ
+  major?: string | null;        // สาขา
+  kku_mail?: string | null;    // อีเมลมหาลัย
 
-  phone?: string | null;
+  phone?: string | null;              // เบอร์โทรติดต่อ
 
   unit?: string | null;        // หน่วยงาน/คณะ (สำหรับบุคลากร)
-  position?: string | null;    // ตำแหน่ง (สำหรับบุคลากร)
+  unit_position?: string | null;    // ตำแหน่ง (สำหรับบุคลากร)
 
   job?: string | null;         // อาชีพ (สำหรับบุคคลภายนอก)
-  address?: string | null;
+  address?: string | null;     // ที่อยู่ (สำหรับบุคคลภายนอก)
 
   // รูปต่าง ๆ (โชว์เฉพาะที่มี)
-  avatar_url?: string | null;
-  idCard?: string | null;
-  kkuIdCard?: string | null;
+  avatar_url?: string | null;  // รูปโปรไฟล์
+  citizen_card_url?: string | null;       // รูปบัตรประชาชน
+  staff_card_url?: string | null;    // รูปบัตรบุคลากรภายใน
 };
 
 function isEmpty(v: unknown) {
@@ -92,17 +91,17 @@ export default function ProfilePage() {
           .select(`
             full_name,
             student_id,
-            year_level,
+            year,
             faculty,
             major,
             kku_mail,
             phone,
             unit,
-            position,
+            unit_position,
             job,
             address,
             avatar_url,
-            idCard,
+            citizen_card_url,
             kkuId
           `)
           .eq('id', user.id)
@@ -163,7 +162,7 @@ export default function ProfilePage() {
 
               {/* กลุ่มข้อมูลนักศึกษา */}
               <Row label="รหัสนักศึกษา" value={profile.student_id} />
-              <Row label="ชั้นปี" value={profile.year_level} />
+              <Row label="ชั้นปี" value={profile.year} />
               <Row label="คณะ" value={profile.faculty} />
               <Row label="สาขา" value={profile.major} />
 
@@ -172,15 +171,15 @@ export default function ProfilePage() {
 
               {/* กลุ่มข้อมูลบุคลากร */}
               <Row label="สังกัด" value={profile.unit} />
-              <Row label="ตำแหน่ง" value={profile.position} />
+              <Row label="ตำแหน่ง" value={profile.unit_position} />
 
               {/* กลุ่มข้อมูลบุคคลภายนอก */}
               <Row label="อาชีพ" value={profile.job} />
               <Row label="ที่อยู่" value={profile.address} />
 
               {/* เอกสาร/รูปแนบ (แสดงเฉพาะที่มี) */}
-              <ImageRow label="บัตรประชาชน" src={profile.idCard ?? undefined} />
-              <ImageRow label="บัตรบุคลากรภายใน" src={profile.kkuIdCard ?? undefined} />
+              <ImageRow label="บัตรประชาชน" src={profile.citizen_card_url ?? undefined} />
+              <ImageRow label="บัตรบุคลากรภายใน" src={profile.staff_card_url ?? undefined} />
             </div>
           )}
         </div>
