@@ -26,19 +26,19 @@ export default function Page() {
 
           <Link
             href="/auth/register-each-type/kku-student"
-            className="mb-5 mt-7 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.05)] md:text-base max-w-sm"
+            className="mb-5 mt-7 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_11px_5px_rgba(0,0,0,0.08)] md:text-[17px] max-w-sm"
             >
             นักศึกษามหาวิทยาลัยขอนแก่น
             </Link>
           <Link
             href="/auth/register-each-type/kku-member"
-            className="mb-5 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.05)] md:text-base max-w-sm"
+            className="mb-5 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_11px_5px_rgba(0,0,0,0.08)] md:text-[17px] max-w-sm"
             >
             บุคคลากรมหาวิทยาลัยขอนแก่น
             </Link>
           <Link
             href="/auth/register-each-type/outsider"
-            className="mb-5 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_10px_5px_rgba(0,0,0,0.05)] md:text-base max-w-sm"
+            className="mb-5 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_11px_5px_rgba(0,0,0,0.08)] md:text-[17px] max-w-sm"
             >
             บุคคลภายนอก
             </Link>
