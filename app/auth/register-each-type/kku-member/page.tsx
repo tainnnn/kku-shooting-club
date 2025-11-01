@@ -9,10 +9,10 @@ import { Input } from "@/components/ui/input";
 type FormState = {
   fullname: string
   phone: string
-  affiliation: string
+  unit: string
   position: string
   applicantPhoto?: File | null
-  idCardCopy?: File | null
+  idCard?: File | null
   kkuIdCard?: File | null
 }
 
@@ -90,7 +90,7 @@ const InputField: React.FC<InputFieldProps> = ({
 export default function KKURegistrationForm() {
     // 2. (ปรับปรุง) เพิ่ม state preview ตัวที่ 3
     const [applicantPhotoPreview, setApplicantPhotoPreview] = useState<string | null>(null)
-    const [idCardCopyPreview, setIdCardCopyPreview] = useState<string | null>(null)
+    const [idCardPreview, setIdCardPreview] = useState<string | null>(null)
     const [kkuIdCardPreview, setKkuIdCardPreview] = useState<string | null>(null) // <-- เพิ่มตัวที่ 3
 
     const [submitting, setSubmitting] = useState(false)
@@ -99,10 +99,10 @@ export default function KKURegistrationForm() {
     const [form, setForm] = useState<FormState>({
         fullname: '',
         phone: '',
-        affiliation: '', // สังกัด
+        unit: '', // สังกัด
         position: '',    // ตำแหน่ง
         applicantPhoto: null,
-        idCardCopy: null,
+        idCard: null,
         kkuIdCard: null,   // บัตรแสดงตน
   })
 
@@ -118,10 +118,10 @@ export default function KKURegistrationForm() {
   }
 
   // (คงเดิม) Handler สำหรับสำเนาบัตรประชาชน
-  function onIdCardCopyChange(file?: File | null) {
-    handleChange('idCardCopy', file ?? null)
-    if (file) setIdCardCopyPreview(URL.createObjectURL(file))
-    else setIdCardCopyPreview(null)
+  function onIdCardChange(file?: File | null) {
+    handleChange('idCard', file ?? null)
+    if (file) setIdCardPreview(URL.createObjectURL(file))
+    else setIdCardPreview(null)
   }
 
   // 3. (เพิ่ม) Handler สำหรับบัตรแสดงตน มข.
@@ -142,13 +142,13 @@ export default function KKURegistrationForm() {
       const payload = {
         ...form,
         applicantPhoto: undefined,
-        idCardCopy: undefined,
+        idCard: undefined,
         kkuIdCard: undefined, // <-- เพิ่มตัวนี้
       }
 
       console.log('submit (Form Data):', payload)
       console.log('submit (Applicant Photo File):', form.applicantPhoto)
-      console.log('submit (ID Card File):', form.idCardCopy)
+      console.log('submit (ID Card File):', form.idCard)
       console.log('submit (KKU ID Card File):', form.kkuIdCard) // <-- เพิ่มตัวนี้
 
       // (คงเดิม) ส่วนแสดงผลลัพธ์
@@ -203,8 +203,8 @@ export default function KKURegistrationForm() {
             <InputField
                 label="สังกัด"
                 placeholder="คณะ/หน่วยงาน"
-                value={form.affiliation}
-                onChange={(v) => handleChange('affiliation', v)}
+                value={form.unit}
+                onChange={(v) => handleChange('unit', v)}
             />
 
             {/* 4. (ปรับปรุง) เปลี่ยนเป็น ตำแหน่ง */}
@@ -259,33 +259,33 @@ export default function KKURegistrationForm() {
                 <label className="mb-1 block text-sm font-medium text-gray-700">สำเนาบัตรประชาชน</label>
                 <div className="relative">
                 <label className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border ${
-                    idCardCopyPreview ? 'border-green-400' : 'border-dashed border-gray-300'
+                    idCardPreview ? 'border-green-400' : 'border-dashed border-gray-300'
                 } bg-white px-4 py-2 text-sm text-gray-600 shadow-sm transition hover:border-gray-400`}>
                     <div className="flex items-center gap-3">
                         <Upload className="h-4 w-4 text-gray-500" />
-                        <span className={`truncate ${idCardCopyPreview ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
-                            {form.idCardCopy ? form.idCardCopy.name : 'อัพโหลดรูปภาพ (ไม่เกิน 1MB)'}
+                        <span className={`truncate ${idCardPreview ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
+                            {form.idCard ? form.idCard.name : 'อัพโหลดรูปภาพ (ไม่เกิน 1MB)'}
                         </span>
                     </div>
                     <input
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => onIdCardCopyChange(e.target.files?.[0])}
+                        onChange={(e) => onIdCardChange(e.target.files?.[0])}
                         required
                     />
                 </label>
-                {idCardCopyPreview && (
+                {idCardPreview && (
                     <div className="mt-4 relative h-40 w-full overflow-hidden rounded-xl border-2 border-green-500 shadow-md">
                         <button
                             type="button"
-                            onClick={() => onIdCardCopyChange(null)}
+                            onClick={() => onIdCardChange(null)}
                             className="absolute top-2 right-2 z-10 rounded-full bg-red-600 p-1 text-white shadow-lg hover:bg-red-700 transition"
                             aria-label="ลบรูปภาพ"
                         >
                             <X className="h-4 w-4" />
                         </button>
-                        <img src={idCardCopyPreview} alt="รูปพรีวิว" className="h-full w-full object-cover" />
+                        <img src={idCardPreview} alt="รูปพรีวิว" className="h-full w-full object-cover" />
                     </div>
                 )}
                 </div>

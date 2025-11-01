@@ -109,7 +109,6 @@ function Navbar() {
             </div>
 
             <div className="ml-auto">
-              {/* AuthButton เดิม (อีเมลลิงก์ไป /account) */}
               <AuthButton />
             </div>
           </div>

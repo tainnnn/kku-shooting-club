@@ -9,10 +9,10 @@ import { Input } from "@/components/ui/input";
 type FormState = {
   fullname: string
   phone: string
-  occupation: string
+  job: string
   address: string
   applicantPhoto?: File | null
-  idCardCopy?: File | null
+  idCard?: File | null
 }
 
 
@@ -100,16 +100,16 @@ const InputField: React.FC<InputFieldProps> = ({
 // Component หลัก
 export default function RegistrationForm() {
     const [applicantPhotoPreview, setApplicantPhotoPreview] = useState<string | null>(null) // <-- เพิ่มตัวนี้
-    const [idCardCopyPreview, setIdCardCopyPreview] = useState<string | null>(null)       // <-- เพิ่มตัวนี้
+    const [idCardPreview, setIdCardPreview] = useState<string | null>(null)       // <-- เพิ่มตัวนี้
 
     const [submitting, setSubmitting] = useState(false)
     const [form, setForm] = useState<FormState>({
         fullname: '',
-        occupation: '',
+        job: '',
         phone: '',
         address: '',
         applicantPhoto: null,
-        idCardCopy: null,
+        idCard: null,
   })
 
   function handleChange<K extends keyof FormState>(key: K, val: FormState[K]) {
@@ -124,10 +124,10 @@ export default function RegistrationForm() {
   }
 
   // ++ เพิ่มฟังก์ชันสำหรับสำเนาบัตรประชาชน ++
-  function onIdCardCopyChange(file?: File | null) {
-    handleChange('idCardCopy', file ?? null)
-    if (file) setIdCardCopyPreview(URL.createObjectURL(file))
-    else setIdCardCopyPreview(null)
+  function onIdCardChange(file?: File | null) {
+    handleChange('idCard', file ?? null)
+    if (file) setIdCardPreview(URL.createObjectURL(file))
+    else setIdCardPreview(null)
   }
 
   async function onSubmit(e: FormEvent) {
@@ -141,13 +141,13 @@ export default function RegistrationForm() {
         ...form,
         // photo: undefined, // <-- ลบตัวนี้
         applicantPhoto: undefined, // <-- เพิ่มตัวนี้ (เพื่อไม่ให้ส่ง File object ไปใน JSON)
-        idCardCopy: undefined,   // <-- เพิ่มตัวนี้
+        idCard: undefined,   // <-- เพิ่มตัวนี้
       }
 
       // Log แยกกันเพื่อให้เห็นชัดเจน
       console.log('submit (Form Data):', payload)
       console.log('submit (Applicant Photo File):', form.applicantPhoto)
-      console.log('submit (ID Card File):', form.idCardCopy)
+      console.log('submit (ID Card File):', form.idCard)
 
 
       // ... (ส่วนที่เหลือของ onSubmit) ...
@@ -200,8 +200,8 @@ export default function RegistrationForm() {
             <InputField
                 label="อาชีพ"
                 placeholder="อาชีพ"
-                value={form.occupation}
-                onChange={(v) => handleChange('occupation', v)}
+                value={form.job}
+                onChange={(v) => handleChange('job', v)}
             />
 
             {/* ที่อยู่ */}
@@ -265,30 +265,30 @@ export default function RegistrationForm() {
                 <div className="relative">
                 {/* Input Area */}
                 <label className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border ${
-                    idCardCopyPreview ? 'border-green-400' : 'border-dashed border-gray-300' // <-- แก้ไข
+                    idCardPreview ? 'border-green-400' : 'border-dashed border-gray-300' // <-- แก้ไข
                 } bg-white px-4 py-2 text-sm text-gray-600 shadow-sm transition hover:border-gray-400`}>
                     <div className="flex items-center gap-3">
                     <Upload className="h-4 w-4 text-gray-500" />
-                    <span className={`truncate ${idCardCopyPreview ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
-                        {form.idCardCopy ? form.idCardCopy.name : 'อัพโหลดรูปภาพ (ไม่เกิน 1MB)'}
+                    <span className={`truncate ${idCardPreview ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
+                        {form.idCard ? form.idCard.name : 'อัพโหลดรูปภาพ (ไม่เกิน 1MB)'}
                     </span>
                     </div>
                     <input
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => onIdCardCopyChange(e.target.files?.[0])}
+                    onChange={(e) => onIdCardChange(e.target.files?.[0])}
                     required
                     />
                 </label>
 
                 {/* Preview Image */}
-                {idCardCopyPreview && (
+                {idCardPreview && (
                     <div className="mt-4 relative h-40 w-full overflow-hidden rounded-xl border-2 border-green-500 shadow-md">
                     {/* ปุ่มลบรูปภาพ */}
                     <button
                         type="button"
-                        onClick={() => onIdCardCopyChange(null)}
+                        onClick={() => onIdCardChange(null)}
                         className="absolute top-2 right-2 z-10 rounded-full bg-red-600 p-1 text-white shadow-lg hover:bg-red-700 transition"
                         aria-label="ลบรูปภาพ"
                     >
@@ -296,7 +296,7 @@ export default function RegistrationForm() {
                     </button>
 
                     {/* Image Tag */}
-                    <img src={idCardCopyPreview} alt="รูปพรีวิว" className="h-full w-full object-cover" />
+                    <img src={idCardPreview} alt="รูปพรีวิว" className="h-full w-full object-cover" />
                     </div>
                 )}
                 </div>
