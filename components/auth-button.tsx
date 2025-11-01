@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { LogoutButton } from "./logout-button";
+import ProfileButton from "./profile-button";
 
 type UserLite = { email: string | null };
 
@@ -38,18 +39,23 @@ export function AuthButton() {
 
   return user ? (
     <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 w-full md:w-auto mb-3">
-      <Button asChild variant="link" size="lg" className="px-0">
-        <Link href="/content/profile" aria-label="ไปที่หน้าบัญชีผู้ใช้">
-          {user.email}
-        </Link>
-      </Button>
-      <div className="w-full md:w-auto">
-        <LogoutButton />
-      </div>
+    <span
+        className="h-9 inline-flex items-center text-sm md:text-base leading-none truncate max-w-[200px]"
+        title={user.email ?? undefined}
+      >
+        {user.email}
+      </span>
+      <button aria-label="ไปที่หน้าบัญชีผู้ใช้" className="inline-flex">
+        <div className="h-9 w-9">
+          <ProfileButton />
+        </div>
+      </button>
     </div>
   ) : (
-    <Button asChild size="sm" variant="outline">
-      <Link href="/auth/login-condition">เข้าสู่ระบบ</Link>
-    </Button>
+    <Link href="/auth/login-condition" className="inline-flex">
+      <Button asChild size="sm" variant="outline" className="h-9">
+        <span>เข้าสู่ระบบ</span>
+      </Button>
+    </Link>
   );
 }

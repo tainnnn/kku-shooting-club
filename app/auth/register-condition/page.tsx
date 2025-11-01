@@ -20,7 +20,7 @@ export default function Page() {
           {/* Divider: แอดมิน */}
           <div className="mb-3 flex w-full items-center gap-3 text-gray-500 max-w-sm">
             <div className="h-px flex-1 bg-gray-300" />
-            <span className="text-sm md:text-base">เลือกประเภทผู้สมัคร</span>
+            <span className="text-sm md:text-base">เลือกประเภทการลงทะเบียน</span>
             <div className="h-px flex-1 bg-gray-300" />
           </div>
 
