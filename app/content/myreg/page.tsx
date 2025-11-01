@@ -14,8 +14,14 @@ function Myreg() {
                           text-center text-xl">
 
                 <div className="text-gray-400 mb-2">
-                    ยังไม่มีรายการที่สมัคร
+                    คุณยังไม่ได้ทำการลงทะเบียน
                 </div>
+                <Link
+                    href="/auth/register-condition"
+                    className="text-blue-500 hover:underline"
+                    >
+                    คลิกที่นี่เพื่อลงทะเบียน
+                </Link>
             </div>
         </div>
       </>
