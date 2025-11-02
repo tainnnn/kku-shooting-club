@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Upload, X, Loader2, ChevronDown } from 'lucide-react'
 import { Input } from "@/components/ui/input";
 
@@ -58,7 +58,7 @@ const InputField: React.FC<InputFieldProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={`w-full appearance-none rounded-lg border border-gray-300 bg-white pl-4 pr-10 py-2 text-sm shadow-sm outline-none transition duration-150 ease-in-out  focus:border-gray-600 focus:ring-1 focus:ring-gray-600 dark:bg-white text-gray-400 ${value ? 'text-gray-800' : 'text-gray-400'}`}
-          >
+        >
           <option value="" disabled>{placeholder}</option>
           {options?.map((option) => (
             <option key={option} value={option} className="py-2 px-3 text-sm">
@@ -95,8 +95,8 @@ const InputField: React.FC<InputFieldProps> = ({
 export default function KKURegistrationForm() {
   // พรีวิวรูปทั้ง 3
   const [applicantPhotoPreview, setApplicantPhotoPreview] = useState<string | null>(null)
-  const [citizen_card_urlPreview, setcitizen_card_urlPreview] = useState<string | null>(null)
-  const [staff_card_urlPreview, staff_card_urlPreview] = useState<string | null>(null)
+  const [citizen_card_urlPreview, setCitizenCardUrlPreview] = useState<string | null>(null)
+  const [staff_card_urlPreview, setStaffCardUrlPreview] = useState<string | null>(null)
 
   const [submitting, setSubmitting] = useState(false)
 
@@ -108,8 +108,8 @@ export default function KKURegistrationForm() {
     last_name: '',
 
     phone: '',
-    unit: '',     // สังกัด
-    unit_position: '', // ตำแหน่ง
+    unit: '',           // สังกัด
+    unit_position: '',  // ตำแหน่ง
 
     applicantPhoto: null,
     citizen_card_url: null,
@@ -120,23 +120,33 @@ export default function KKURegistrationForm() {
     setForm((s) => ({ ...s, [key]: val }))
   }
 
+  // --- cleanup object URLs เมื่อ component ถูก unmount ---
+  useEffect(() => {
+    return () => {
+      if (applicantPhotoPreview) URL.revokeObjectURL(applicantPhotoPreview)
+      if (citizen_card_urlPreview) URL.revokeObjectURL(citizen_card_urlPreview)
+      if (staff_card_urlPreview) URL.revokeObjectURL(staff_card_urlPreview)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Handler ไฟล์ต่าง ๆ
   function onApplicantPhotoChange(file?: File | null) {
     handleChange('applicantPhoto', file ?? null)
-    if (file) setApplicantPhotoPreview(URL.createObjectURL(file))
-    else setApplicantPhotoPreview(null)
+    if (applicantPhotoPreview) URL.revokeObjectURL(applicantPhotoPreview)
+    setApplicantPhotoPreview(file ? URL.createObjectURL(file) : null)
   }
 
-  function oncitizen_card_urlChange(file?: File | null) {
+  function onCitizenCardUrlChange(file?: File | null) {
     handleChange('citizen_card_url', file ?? null)
-    if (file) setcitizen_card_urlPreview(URL.createObjectURL(file))
-    else setcitizen_card_urlPreview(null)
+    if (citizen_card_urlPreview) URL.revokeObjectURL(citizen_card_urlPreview)
+    setCitizenCardUrlPreview(file ? URL.createObjectURL(file) : null)
   }
 
-  function staff_card_urlChange(file?: File | null) {
+  function onStaffCardUrlChange(file?: File | null) {
     handleChange('staff_card_url', file ?? null)
-    if (file) staff_card_urlPreview(URL.createObjectURL(file))
-    else staff_card_urlPreview(null)
+    if (staff_card_urlPreview) URL.revokeObjectURL(staff_card_urlPreview)
+    setStaffCardUrlPreview(file ? URL.createObjectURL(file) : null)
   }
 
   async function onSubmit(e: FormEvent) {
@@ -201,7 +211,7 @@ export default function KKURegistrationForm() {
 
           <form onSubmit={onSubmit} noValidate>
 
-            {/* คำนำหน้า (ใช้สไตล์เดียวกับ select อื่น ๆ) */}
+            {/* คำนำหน้า */}
             <InputField
               label="คำนำหน้า"
               placeholder="เลือกคำนำหน้า"
@@ -318,7 +328,7 @@ export default function KKURegistrationForm() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => oncitizen_card_urlChange(e.target.files?.[0])}
+                    onChange={(e) => onCitizenCardUrlChange(e.target.files?.[0])}
                     required
                   />
                 </label>
@@ -326,7 +336,7 @@ export default function KKURegistrationForm() {
                   <div className="mt-4 relative h-40 w-full overflow-hidden rounded-xl border-2 border-green-500 shadow-md">
                     <button
                       type="button"
-                      onClick={() => oncitizen_card_urlChange(null)}
+                      onClick={() => onCitizenCardUrlChange(null)}
                       className="absolute top-2 right-2 z-10 rounded-full bg-red-600 p-1 text-white shadow-lg hover:bg-red-700 transition"
                       aria-label="ลบรูปภาพ"
                     >
@@ -354,7 +364,7 @@ export default function KKURegistrationForm() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => staff_card_urlChange(e.target.files?.[0])}
+                    onChange={(e) => onStaffCardUrlChange(e.target.files?.[0])}
                     required
                   />
                 </label>
@@ -362,7 +372,7 @@ export default function KKURegistrationForm() {
                   <div className="mt-4 relative h-40 w-full overflow-hidden rounded-xl border-2 border-green-500 shadow-md">
                     <button
                       type="button"
-                      onClick={() => staff_card_urlChange(null)}
+                      onClick={() => onStaffCardUrlChange(null)}
                       className="absolute top-2 right-2 z-10 rounded-full bg-red-600 p-1 text-white shadow-lg hover:bg-red-700 transition"
                       aria-label="ลบรูปภาพ"
                     >

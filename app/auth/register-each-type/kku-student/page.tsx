@@ -12,7 +12,7 @@ type FormState = {
   student_id: string
   year: string
   faculty: string
-  faculty_other: string   // ✅ เพิ่มฟิลด์นี้
+  faculty_other: string   
   major: string
   kku_mail: string
   phone: string
