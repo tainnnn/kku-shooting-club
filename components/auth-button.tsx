@@ -60,7 +60,7 @@ export function AuthButton() {
      asChild
      variant="default"
      size="sm"
-     className=" !rounded-md !border !border-gray-300 !px-5 !text-gray-600 !text-[13px] !font-[500] !duration-200 !transition !hover:shadow-[0_0_3px_3px_rgba(0,0,0,0.1)]"
+     className=" !rounded-md !bg-red-900 !border-none !px-5 !text-white !text-[13px] !font-[500] !duration-200 !transition !hover:shadow-[0_0_3px_5px_rgba(0,0,0,0.1)]"
      >
       <Link
       href="/auth/login-condition"
