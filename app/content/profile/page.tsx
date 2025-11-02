@@ -7,24 +7,23 @@ import { createClient } from '@/lib/supabase/client';
 
 type ProfileData = {
   full_name?: string | null;
-  student_id?: string | null; // รหัสนักศึกษา
-  year?: string | number | null;      // ชั้นปี
-  faculty?: string | null;     // คณะ
-  major?: string | null;        // สาขา
-  kku_mail?: string | null;    // อีเมลมหาลัย
 
-  phone?: string | null;              // เบอร์โทรติดต่อ
+  student_id?: string | null;
+  year?: number | string | null;
+  faculty?: string | null;
+  major?: string | null;
+  kku_mail?: string | null;
+  phone?: string | null;
 
-  unit?: string | null;        // หน่วยงาน/คณะ (สำหรับบุคลากร)
-  unit_position?: string | null;    // ตำแหน่ง (สำหรับบุคลากร)
+  unit?: string | null;
+  unit_position?: string | null;
 
-  job?: string | null;         // อาชีพ (สำหรับบุคคลภายนอก)
-  address?: string | null;     // ที่อยู่ (สำหรับบุคคลภายนอก)
+  job?: string | null;
+  address?: string | null;
 
-  // รูปต่าง ๆ (โชว์เฉพาะที่มี)
-  avatar_url?: string | null;  // รูปโปรไฟล์
-  citizen_card_url?: string | null;       // รูปบัตรประชาชน
-  staff_card_url?: string | null;    // รูปบัตรบุคลากรภายใน
+  avatar_url?: string | null;        // renderable url
+  citizen_card_url?: string | null;  // renderable url
+  staff_card_url?: string | null;    // renderable url
 };
 
 function isEmpty(v: unknown) {
@@ -33,7 +32,6 @@ function isEmpty(v: unknown) {
   return false;
 }
 
-// แถวแสดงข้อมูล: ถ้าไม่มีค่า -> ไม่เรนเดอร์อะไรเลย
 function Row({ label, value }: { label: string; value?: string | number | null }) {
   if (isEmpty(value)) return null;
   return (
@@ -46,7 +44,6 @@ function Row({ label, value }: { label: string; value?: string | number | null }
   );
 }
 
-// แถวรูปภาพ (เช่น บัตร/รูปโปรไฟล์): ถ้าไม่มีค่า -> ไม่เรนเดอร์
 function ImageRow({ label, src }: { label: string; src?: string | null }) {
   if (isEmpty(src)) return null;
   return (
@@ -54,15 +51,14 @@ function ImageRow({ label, src }: { label: string; src?: string | null }) {
       <div className="text-sm text-gray-500">{label}</div>
       <div className="rounded-md border border-gray-200 bg-white p-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src as string}
-          alt={label}
-          className="max-h-52 w-full rounded-md object-contain"
-        />
+        <img src={src as string} alt={label} className="max-h-52 w-full rounded-md object-contain" />
       </div>
     </div>
   );
 }
+
+// ใช้ bucket เดียวตามที่คุณตั้งไว้จริง
+const BUCKET = 'avatars';
 
 export default function ProfilePage() {
   const supabase = createClient();
@@ -74,7 +70,7 @@ export default function ProfilePage() {
 
     (async () => {
       try {
-        // 1) เอา user ปัจจุบัน
+        // 1) ต้องมี session
         const { data: { user } } = await supabase.auth.getUser();
         if (!mounted) return;
 
@@ -84,35 +80,69 @@ export default function ProfilePage() {
           return;
         }
 
-        // 2) ดึงโปรไฟล์จากตารางของนายท่าน (แก้ชื่อ table/columns ให้ตรงจริง)
-        //    ตัวอย่างสมมติ: profiles โดยมี id = user.id
+        // 2) ดึงข้อมูลจาก "public.user"
         const { data, error } = await supabase
-          .from('profiles')
+          .from('user')
           .select(`
-            full_name,
-            student_id,
-            year,
-            faculty,
-            major,
-            kku_mail,
-            phone,
-            unit,
-            unit_position,
-            job,
-            address,
-            avatar_url,
-            citizen_card_url,
-            kkuId
+            prefix, first_name, last_name,
+            student_id, year, faculty, major,
+            kku_mail, phone,
+            unit, unit_position,
+            job, address,
+            avatar_url, citizen_card_url, staff_card_url,
+            email_login
           `)
           .eq('id', user.id)
-          .single<ProfileData>();
+          .single();
 
-        if (error) {
-          // ถ้าตาราง/แถวไม่มี ให้ปล่อย profile = null; หน้า UI จะยังแสดงได้
+        if (error || !data) {
           setProfile(null);
-        } else {
-          setProfile(data ?? null);
+          setLoading(false);
+          return;
         }
+
+        // 3) รวมชื่อ
+        const full_name =
+          [data.prefix, data.first_name, data.last_name].filter(Boolean).join(' ').trim() || null;
+
+        // 4) helper: storage path -> URL ที่แสดงผลได้ (signed ถ้า private, public URL ถ้า public)
+        async function toRenderableUrl(path?: string | null) {
+          if (!path || isEmpty(path)) return null;
+
+          // ลอง signed ก่อน (ใช้ได้กับ private)
+          const signed = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 10);
+          if (signed.data?.signedUrl) return signed.data.signedUrl;
+
+          // ถ้า signed ไม่ได้ ให้ใช้ public URL (กรณี bucket public)
+          const pub = supabase.storage.from(BUCKET).getPublicUrl(path);
+          return pub.data?.publicUrl ?? null;
+        }
+
+        const avatarUrl   = await toRenderableUrl(data.avatar_url);
+        const citizenUrl  = await toRenderableUrl(data.citizen_card_url);
+        const staffUrl    = await toRenderableUrl(data.staff_card_url);
+
+        const mapped: ProfileData = {
+          full_name,
+          student_id: data.student_id,
+          year: data.year,
+          faculty: data.faculty,
+          major: data.major,
+          kku_mail: data.kku_mail ?? data.email_login, // fallback
+          phone: data.phone,
+          unit: data.unit,
+          unit_position: data.unit_position,
+          job: data.job,
+          address: data.address,
+          avatar_url: avatarUrl,
+          citizen_card_url: citizenUrl,
+          staff_card_url: staffUrl,
+        };
+
+        if (mounted) setProfile(mapped);
+      } catch (e) {
+        console.error(e);
+        if (mounted) setProfile(null);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -135,23 +165,18 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="mx-auto grid w-full max-w-3xl grid-cols-1 gap-4">
-              {/* ส่วนหัว: รูปโปรไฟล์ (ถ้ามี) + ชื่อ */}
+              {/* Header */}
               <div className="flex items-center gap-4">
                 {!isEmpty(profile.avatar_url) && (
                   <div className="h-16 w-16 overflow-hidden rounded-full ring-1 ring-gray-200">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={profile.avatar_url as string}
-                      alt="avatar"
-                      className="h-full w-full object-cover"
-                    />
+                    <img src={profile.avatar_url as string} alt="avatar" className="h-full w-full object-cover" />
                   </div>
                 )}
                 <div className="flex-1">
                   <div className="text-lg font-medium">
                     {isEmpty(profile.full_name) ? 'ผู้ใช้' : profile.full_name}
                   </div>
-                  {/* แสดงอีเมลมหาลัยถ้ามี */}
                   {!isEmpty(profile.kku_mail) && (
                     <div className="text-sm text-gray-500">{profile.kku_mail}</div>
                   )}
@@ -160,24 +185,24 @@ export default function ProfilePage() {
 
               <div className="h-px w-full bg-gray-200 my-2" />
 
-              {/* กลุ่มข้อมูลนักศึกษา */}
+              {/* นักศึกษา */}
               <Row label="รหัสนักศึกษา" value={profile.student_id} />
               <Row label="ชั้นปี" value={profile.year} />
               <Row label="คณะ" value={profile.faculty} />
               <Row label="สาขา" value={profile.major} />
 
-              {/* กลุ่มข้อมูลติดต่อ */}
+              {/* ติดต่อ */}
               <Row label="เบอร์โทรติดต่อ" value={profile.phone} />
 
-              {/* กลุ่มข้อมูลบุคลากร */}
+              {/* บุคลากร */}
               <Row label="สังกัด" value={profile.unit} />
               <Row label="ตำแหน่ง" value={profile.unit_position} />
 
-              {/* กลุ่มข้อมูลบุคคลภายนอก */}
+              {/* บุคคลภายนอก */}
               <Row label="อาชีพ" value={profile.job} />
               <Row label="ที่อยู่" value={profile.address} />
 
-              {/* เอกสาร/รูปแนบ (แสดงเฉพาะที่มี) */}
+              {/* เอกสารแนบ */}
               <ImageRow label="บัตรประชาชน" src={profile.citizen_card_url ?? undefined} />
               <ImageRow label="บัตรบุคลากรภายใน" src={profile.staff_card_url ?? undefined} />
             </div>

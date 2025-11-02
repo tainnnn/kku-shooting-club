@@ -4,7 +4,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";6
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -23,6 +24,11 @@ export default function Page() {
                 You&apos;ve successfully signed up. Please check your email to
                 confirm your account before signing in.
               </p>
+              <button className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-green-500 px-5 py-3 text-white text-base font-semibold shadow-[0_0_25px_5px_rgba(0,0,0,0.07)] transition duration-300 hover:bg-green-600 disabled:opacity-60">
+                <Link
+                  href="/auth/login-condition"
+                >Go to login page</Link>
+              </button>
             </CardContent>
           </Card>
         </div>
