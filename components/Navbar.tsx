@@ -76,8 +76,8 @@ function Navbar() {
         aria-label="KKU Shooting Club"
         className="
           relative w-full text-white
-          bg-[linear-gradient(170deg,#7d2c1b,#a73b24,#d45c43)]
-          shadow-md
+          bg-[linear-gradient(100deg,#7d2c1b,#a73b24,#d45c43)]
+          !shadow-none
         "
       >
         {/* subtle vignette / highlight */}
