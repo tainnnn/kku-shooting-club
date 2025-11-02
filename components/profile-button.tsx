@@ -134,7 +134,7 @@ export default function ProfileButton() {
           <DropdownMenuItem
             asChild
             className="
-              px-4 py-2.5 text-[14px] text-gray-900 duration-150 cursor-pointer
+              px-4 py-2.5 text-[14px] text-gray-900 duration-150 cursor-pointer rounded-none
               hover:bg-gray-100 focus:bg-gray-100
               outline-none focus:outline-none focus-visible:outline-none
             "
@@ -154,14 +154,9 @@ export default function ProfileButton() {
           {/* ออกจากระบบ */}
           <DropdownMenuItem
             onClick={signOut}
-            // className="
-            //   px-4 py-2.5 text-[14px]
-            //   text-red-600 hover:bg-red-50 focus:bg-red-50
-            //   outline-none focus:outline-none focus-visible:outline-none
-            // "
             className="
             group
-            px-4 py-2.5 text-[14px] duration-150 cursor-pointer
+            px-4 py-2.5 text-[14px] duration-150 cursor-pointer rounded-none
             text-red-600 hover:bg-red-50 focus:bg-red-50
             hover:text-red-600 focus:text-red-600
             data-[highlighted]:text-red-600
