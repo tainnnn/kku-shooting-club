@@ -1,4 +1,4 @@
-// auth-button.tsx
+// components/auth-button.tsx
 'use client'
 
 import { useEffect, useState } from "react";
@@ -34,10 +34,8 @@ export function AuthButton() {
     };
   }, [supabase]);
 
-  // skeleton กัน layout shift
   if (loading) return <div className="h-9 w-40" />;
 
-  // มีผู้ใช้: แสดงอีเมล + ปุ่มโปรไฟล์ (ซึ่งมีเมนูและปุ่มออกจากระบบอยู่แล้ว)
   if (user) {
     return (
       <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 w-full md:w-auto mb-3">
@@ -54,7 +52,6 @@ export function AuthButton() {
     );
   }
 
-  // ไม่มีผู้ใช้: แสดงปุ่มเข้าสู่ระบบของ shadcn/ui (รูปแบบที่ถูกต้อง: Button asChild > Link)
   return (
     <Button
      asChild
@@ -66,6 +63,9 @@ export function AuthButton() {
       href="/auth/login-condition"
       className="mb-2 "
       >เข้าสู่ระบบ</Link>
+
     </Button>
   );
 }
+
+export default AuthButton; // ✅ เพิ่ม default export
