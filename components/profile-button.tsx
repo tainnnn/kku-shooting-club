@@ -6,7 +6,6 @@ import Image, { type StaticImageData } from 'next/image';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import defaultAvatar from '@/components/pic/profile-button.png';
-import { Button } from '@/components/ui/button';
 
 import {
   DropdownMenu,
@@ -15,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User2 } from 'lucide-react';
+
+const BUCKET = 'avatars';
 
 export default function ProfileButton() {
   const supabase = createClient();
@@ -29,8 +30,9 @@ export default function ProfileButton() {
   useEffect(() => {
     let mounted = true;
 
-    (async () => {
+    async function load() {
       const { data: { user } } = await supabase.auth.getUser();
+
       if (!mounted) return;
 
       if (!user) {
@@ -46,24 +48,35 @@ export default function ProfileButton() {
       setDisplayName((user.user_metadata?.full_name as string | undefined) ?? null);
       setEmail(user.email ?? null);
 
-      let url = (user.user_metadata?.avatar_url as string | undefined) ?? '';
-      if (!url) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('avatar_path')
-          .eq('id', user.id)
-          .single<{ avatar_path: string | null }>();
+      // 1) ดึงพาธรูปจากตาราง "user"
+      const { data: row, error } = await supabase
+        .from('user')
+        .select('avatar_url')
+        .eq('id', user.id)
+        .single<{ avatar_url: string | null }>();
 
-        if (profile?.avatar_path) {
-          const { data } = supabase.storage.from('avatars').getPublicUrl(profile.avatar_path);
-          url = data.publicUrl;
+      let url: string | null = null;
+
+      if (!error && row?.avatar_url) {
+        const path = row.avatar_url; // ตัวอย่าง: users/<uid>/avatar/current.jpg
+
+        // 2) สร้างลิงก์จาก storage (รองรับทั้ง private/public)
+        //    - ลอง signed URL ก่อน (ใช้ได้กับ private bucket)
+        const signed = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 60);
+        if (signed.data?.signedUrl) {
+          url = `${signed.data.signedUrl}&cb=${Date.now()}`; // cache-busting
+        } else {
+          // fallback ถ้าบัคเก็ต public
+          const pub = supabase.storage.from(BUCKET).getPublicUrl(path);
+          url = pub.data.publicUrl ? `${pub.data.publicUrl}?cb=${Date.now()}` : null;
         }
       }
 
       setImgSrc(url || defaultAvatar);
       setLoading(false);
-    })();
+    }
 
+    load();
     return () => { mounted = false; };
   }, [supabase]);
 
@@ -75,22 +88,14 @@ export default function ProfileButton() {
 
   if (loading) return <div className="h-9 w-9 animate-pulse rounded-full bg-muted/50" />;
 
-  if (!isLoggedIn) {
-    return null;
-  }
+  if (!isLoggedIn) return null;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Open profile menu"
-          className="
-            inline-flex h-9 w-9 items-center justify-center overflow-hidden
-            rounded-full bg-white
-            focus-visible:outline-none
-            focus-visible:ring-2 focus-visible:ring-black/20
-            dark:focus-visible:ring-white/30
-          "
+          className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 dark:focus-visible:ring-white/30"
         >
           <span className="relative h-9 w-9">
             <Image
@@ -109,43 +114,23 @@ export default function ProfileButton() {
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className="
-          w-72 p-0 overflow-hidden
-          rounded-2xl border border-black/10
-          bg-white text-gray-900
-          shadow-[0_10px_40px_-12px_rgba(0,0,0,0.25)]
-          dark:bg-white dark:text-gray-900
-          [*]:focus:outline-none [*]:focus-visible:outline-none
-        "
+        className="w-72 p-0 overflow-hidden rounded-2xl border border-black/10 bg-white text-gray-900 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.25)] [*]:focus:outline-none [*]:focus-visible:outline-none"
       >
-    {/* Header (email/name) */}
-    <div className="divide-y divide-black/10">
-        <div className="px-4 py-2.5">
-          <div className="text-sm font-semibold leading-tight truncate">
-            {displayName ?? email ?? 'User'}
+        <div className="divide-y divide-black/10">
+          {/* Header */}
+          <div className="px-4 py-2.5">
+            <div className="truncate text-sm font-semibold leading-tight">
+              {displayName ?? email ?? 'User'}
+            </div>
+            {email && <div className="truncate text-[12px] text-gray-600">{email}</div>}
           </div>
-          {email && (
-            <div className="text-[12px] text-gray-600 truncate">{email}</div>
-          )}
-        </div>
-
 
           {/* โปรไฟล์ของฉัน */}
           <DropdownMenuItem
             asChild
-            className="
-              px-4 py-2.5 text-[14px] text-gray-900 duration-150 cursor-pointer rounded-none
-              hover:bg-gray-100 focus:bg-gray-100
-              outline-none focus:outline-none focus-visible:outline-none
-            "
+            className="cursor-pointer rounded-none px-4 py-2.5 text-[14px] text-gray-900 duration-150 hover:bg-gray-100 focus:bg-gray-100"
           >
-            <Link
-              href="/content/profile"
-              className="
-                flex w-full items-center
-                outline-none focus:outline-none focus-visible:outline-none
-              "
-            >
+            <Link href="/content/profile" className="flex w-full items-center">
               <User2 className="mr-3 h-4 w-4 text-gray-700" />
               <span>โปรไฟล์ของฉัน</span>
             </Link>
@@ -154,14 +139,7 @@ export default function ProfileButton() {
           {/* ออกจากระบบ */}
           <DropdownMenuItem
             onClick={signOut}
-            className="
-            group
-            px-4 py-2.5 text-[14px] duration-150 cursor-pointer rounded-none
-            text-red-600 hover:bg-red-50 focus:bg-red-50
-            hover:text-red-600 focus:text-red-600
-            data-[highlighted]:text-red-600
-            outline-none focus:outline-none focus-visible:outline-none
-          "
+            className="group cursor-pointer rounded-none px-4 py-2.5 text-[14px] text-red-600 duration-150 hover:bg-red-50 focus:bg-red-50"
           >
             <LogOut className="mr-3 h-4 w-4 text-red-600" />
             <span>ออกจากระบบ</span>
