@@ -95,8 +95,14 @@ export default function ProfileButton() {
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Open profile menu"
-          className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20 dark:focus-visible:ring-white/30"
-        >
+          className="
+            inline-flex h-9 w-9 items-center justify-center overflow-hidden
+            rounded-full bg-white
+            focus-visible:outline-none
+            focus-visible:ring-2 focus-visible:ring-black/20
+            dark:focus-visible:ring-white/30
+          "
+>
           <span className="relative h-9 w-9">
             <Image
               src={imgSrc}
@@ -114,7 +120,14 @@ export default function ProfileButton() {
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className="w-72 p-0 overflow-hidden rounded-2xl border border-black/10 bg-white text-gray-900 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.25)] [*]:focus:outline-none [*]:focus-visible:outline-none"
+        className="
+        w-72 p-0 overflow-hidden
+        rounded-2xl border border-black/10
+        bg-white text-gray-900
+        shadow-[0_10px_40px_-12px_rgba(0,0,0,0.25)]
+        dark:bg-white dark:text-gray-900
+        [*]:focus:outline-none [*]:focus-visible:outline-none
+      "
       >
         <div className="divide-y divide-black/10">
           {/* Header */}
@@ -128,7 +141,11 @@ export default function ProfileButton() {
           {/* โปรไฟล์ของฉัน */}
           <DropdownMenuItem
             asChild
-            className="cursor-pointer rounded-none px-4 py-2.5 text-[14px] text-gray-900 duration-150 hover:bg-gray-100 focus:bg-gray-100"
+            className="
+            px-4 py-2.5 text-[14px] text-gray-900 duration-150 cursor-pointer rounded-none
+            hover:bg-gray-100 focus:bg-gray-100
+            outline-none focus:outline-none focus-visible:outline-none
+          "
           >
             <Link href="/content/profile" className="flex w-full items-center">
               <User2 className="mr-3 h-4 w-4 text-gray-700" />
@@ -139,7 +156,14 @@ export default function ProfileButton() {
           {/* ออกจากระบบ */}
           <DropdownMenuItem
             onClick={signOut}
-            className="group cursor-pointer rounded-none px-4 py-2.5 text-[14px] text-red-600 duration-150 hover:bg-red-50 focus:bg-red-50"
+            className="
+            group
+            px-4 py-2.5 text-[14px] duration-150 cursor-pointer rounded-none
+            text-red-600 hover:bg-red-50 focus:bg-red-50
+            hover:text-red-600 focus:text-red-600
+            data-[highlighted]:text-red-600
+            outline-none focus:outline-none focus-visible:outline-none
+          "
           >
             <LogOut className="mr-3 h-4 w-4 text-red-600" />
             <span>ออกจากระบบ</span>
