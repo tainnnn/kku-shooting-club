@@ -54,14 +54,16 @@ export function AuthButton() {
 
   return (
     <Button
-      asChild
-      variant="default"
-      size="sm"
-      className="!rounded-md !bg-red-900 !border-none !px-5 !text-white !text-[13px] !font-[500] !duration-200 !transition !hover:shadow-[0_0_3px_5px_rgba(0,0,0,0.1)]"
-    >
-      <Link href="/auth/login-condition" className="mb-2">
-        เข้าสู่ระบบ
-      </Link>
+     asChild
+     variant="default"
+     size="sm"
+     className=" !rounded-md !bg-red-900 !border-none !px-5 !text-white !text-[13px] !font-[500] !duration-200 !transition !hover:shadow-[0_0_3px_5px_rgba(0,0,0,0.1)] !hover:shadow-[0_0_10px_3px_rgba(0,0,0,0.1)] !hover:bg-[color-mix(in_oklab,hsl(var(--primary)),black_50%)] !dark:hover:bg-[color-mix(in_oklab,hsl(var(--primary)),black_12%)]"
+     >
+      <Link
+      href="/auth/login-condition"
+      className="mb-2 "
+      >เข้าสู่ระบบ</Link>
+
     </Button>
   );
 }
