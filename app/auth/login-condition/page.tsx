@@ -40,20 +40,6 @@ export default function Page() {
             Continue with Google
             </Link>
 
-          {/* Divider: แอดมิน */}
-          <div className="mb-3 flex w-full items-center gap-3 text-gray-500 max-w-sm">
-            <div className="h-px flex-1 bg-gray-300" />
-            <span className="text-sm md:text-base">เข้าสู่ระบบสำหรับแอดมิน</span>
-            <div className="h-px flex-1 bg-gray-300" />
-          </div>
-
-          {/* Log in Admin */}
-          <Link
-            href="/auth/login"
-            className="mb-12 inline-flex w-full items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-gray-600 text-sm font-medium shadow-sm transition hover:shadow-[0_0_15px_3px_rgba(0,0,0,0.06)] md:text-base max-w-sm"
-            >
-            Log in Admin
-            </Link>
         </div>
       </div>
     );

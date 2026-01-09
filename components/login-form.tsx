@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -38,14 +37,33 @@ export function LoginForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // 1) Login ด้วย Supabase Auth
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       if (error) throw error;
 
-      // กลับไปหน้า page.tsx หลัก หรือเส้นทางใน redirectTo
-      router.replace(redirectTo);
+      const user = data.user;
+      if (!user) throw new Error("No user found");
+
+      // 2) ดึง role จาก table public.user
+      const { data: profile, error: profileError } = await supabase
+        .from("user")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      // 3) Redirect ตาม role
+      if (profile.role === "admin") {
+        router.replace("/admin");
+      } else {
+        // user ปกติยังใช้ flow เดิม
+        router.replace(redirectTo);
+      }
+
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -54,20 +72,24 @@ export function LoginForm({
   };
 
   return (
-    // <div className={cn("flex flex-col gap-6", className)} {...props}>
-    <div className={cn("flex min-h-screen items-center justify-center bg-white text-black", className)} {...props}>
-      <Card className="w-full max-w-sm rounded-lg ">
+    <div
+      className={cn(
+        "flex min-h-screen items-center justify-center bg-white text-black",
+        className
+      )}
+      {...props}
+    >
+      <Card className="w-full max-w-sm rounded-lg">
         <CardHeader>
-          <CardTitle className="text-gray-800 text-4xl text-center mt-1 mb-1">Login</CardTitle>
+          <CardTitle className="text-gray-800 text-4xl text-center mt-1 mb-1">
+            Login
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label
-                  htmlFor="email"
-                  className="text-gray-800"
-                >
+                <Label htmlFor="email" className="text-gray-800">
                   Email
                 </Label>
                 <Input
@@ -79,15 +101,12 @@ export function LoginForm({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                //   className="!rounded-lg border-gray-300 focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
                 />
               </div>
+
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label
-                    htmlFor="password"
-                    className="text-gray-800"
-                  >
+                  <Label htmlFor="password" className="text-gray-800">
                     Password
                   </Label>
                   <Link
@@ -107,17 +126,21 @@ export function LoginForm({
                   disabled={isLoading}
                 />
               </div>
+
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full border-2 border-gray-800 bg-gray-800 text-white hover:bg-white hover:text-gray-800 hover:border-gray-800" disabled={isLoading}>
+
+              <Button
+                type="submit"
+                className="w-full border-2 border-gray-800 bg-gray-800 text-white hover:bg-white hover:text-gray-800 hover:border-gray-800"
+                disabled={isLoading}
+              >
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
             </div>
+
             <div className="mt-4 text-center text-sm text-gray-800">
               Don&apos;t have an account{" "}
-              <Link
-                href="/auth/sign-up"
-                className="underline underline-offset-4"
-              >
+              <Link href="/auth/sign-up" className="underline underline-offset-4">
                 Sign up
               </Link>
             </div>
