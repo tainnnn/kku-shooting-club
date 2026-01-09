@@ -189,7 +189,7 @@ function Navbar() {
                 {menuOpen && (
                     <div
                         id="mobile-menu"
-                        className="absolute right-5 top-full mt-1 md:hidden flex flex-col items-start bg-white border border-gray-200 rounded-lg shadow-md py-4 px-6 space-y-3 text-base z-50"
+                        className="absolute right-5 top-full mt-1 md:hidden flex flex-col items-start bg-white border border-gray-200 rounded-lg shadow-md py-4 px-6 space-y-3 text-base z-50 "
                     >
                         {navLinks.map((link) => (
                             <Link

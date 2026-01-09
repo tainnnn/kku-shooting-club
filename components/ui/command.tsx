@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
 import { cn } from '@/lib/utils';
 
-// กล่องหลักของ Command (พื้นหลัง/สีให้เหมือนเมนูปกติ)
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
