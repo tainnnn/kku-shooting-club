@@ -153,7 +153,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
-      <Navbar />
 
       <div className="bg-gray-200 mx-5 my-5 rounded-md p-4 flex-1 flex items-stretch overflow-hidden">
         <div className="bg-white flex flex-1 flex-col min-h-full p-4 md:p-6 text-gray-900 rounded-md">

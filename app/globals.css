@@ -3,25 +3,63 @@
 @tailwind utilities;
 
 :root {
-    --radius: 0.5rem; /* ทำให้ทุก component มีขอบโค้ง (8px) */
+  --radius: 0.5rem;
+
+  --rdp-cell-size: 2.5rem;
+  --rdp-accent-color: #16a34a;
+  --rdp-background-color: #ffffff;
   }
 
   @layer base {
-    /* ปรับสไตล์พื้นฐานของ input ทั่วระบบ */
     input, textarea, select {
       @apply rounded-lg ;
     }
   }
 
-    /* ใช้กับ elements ที่มี class="scrollbar-kku" เท่านั้น */
-
-    /* Firefox */
-    .scrollbar-kku {
-        scrollbar-width: thin;                          /* บาง */
-        scrollbar-color: rgba(0,0,0,.35) transparent;   /* thumb, track=โปร่งใส */
+    .rdp {
+      --rdp-cell-size: var(--rdp-cell-size);
     }
 
-    /* WebKit/Chromium */
+    .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+      background-color: rgba(22, 163, 74, 0.12);
+    }
+
+    .rdp-day_selected,
+    .rdp-day_selected:hover {
+      background-color: #16a34a;
+      color: white;
+    }
+
+    .rdp-day_today {
+      font-weight: 600;
+      border: 1px solid #16a34a;
+    }
+    .react-datepicker {
+      border-radius: 12px;
+      font-family: inherit;
+    }
+
+    .react-datepicker__header {
+      background-color: #f97316;
+      color: white;
+    }
+
+    .react-datepicker__current-month,
+    .react-datepicker__day-name {
+      color: white;
+    }
+
+    .react-datepicker__day--selected {
+      background-color: #16a34a;
+    }
+
+
+    .scrollbar-kku {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0,0,0,.35) transparent;
+    }
+
+
     .scrollbar-kku::-webkit-scrollbar { width: 8px; background: transparent; }
     .scrollbar-kku::-webkit-scrollbar-track { background: transparent; }
     .scrollbar-kku::-webkit-scrollbar-thumb {
@@ -33,17 +71,17 @@
     .scrollbar-kku::-webkit-scrollbar-corner { background: transparent; }
 
     .scrollbar-kku::-webkit-scrollbar-track {
-        background: transparent;                         /* track โปร่งใส */
+        background: transparent;
     }
 
     .scrollbar-kku::-webkit-scrollbar-thumb {
-        background-color: rgba(0,0,0,.35);               /* สีแท่ง */
+        background-color: rgba(0,0,0,.35);
         border-radius: 9999px;
-        border: 2px solid transparent;                   /* ให้ดูบาง/โปร่งริม ๆ */
+        border: 2px solid transparent;
         background-clip: content-box;
     }
 
-    /* ซ่อนปุ่มลูกศรทั้งหมดของสกอลล์บาร์แนวตั้ง */
+
     .scrollbar-kku::-webkit-scrollbar-button,
     .scrollbar-kku::-webkit-scrollbar-button:single-button,
     .scrollbar-kku::-webkit-scrollbar-button:start,
@@ -51,7 +89,7 @@
     .scrollbar-kku::-webkit-scrollbar-button:vertical:increment,
     .scrollbar-kku::-webkit-scrollbar-button:vertical:decrement,
     .scrollbar-kku::-webkit-scrollbar-button:start:decrement,
-    .scrollbar-kku::-webkit-scrollbar-button:end:increment {
+    .scrollbar-kku::-webkit-scrollbar-button🔚increment {
       display: none !important;
       width: 0 !important;
       height: 0 !important;
@@ -59,18 +97,18 @@
     }
 
 @layer components {
-  /* ฐานของฟิลด์ทั่วไป (ถ้ามีอยู่แล้วไม่ต้องซ้ำ) */
+
   .field-base {
     @apply w-full rounded-lg border bg-white text-sm shadow-sm
            outline-none transition-colors;
   }
 
-  /* แค่เอา “hover style” ของ combobox มา */
+
   .hover-like-combobox {
     @apply hover:border-gray-400;
   }
 
-  /* ถ้ารองรับ dark mode ด้วย (เลือกใส่ได้) */
+
   .dark .hover-like-combobox {
     @apply hover:border-neutral-400;
   }

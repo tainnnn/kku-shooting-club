@@ -103,7 +103,7 @@ export default function ProfileButton() {
             dark:focus-visible:ring-white/30
           "
 >
-          <span className="relative h-9 w-9">
+          <span className="relative inline-block h-9 w-9">
             <Image
               src={imgSrc}
               alt="Profile"

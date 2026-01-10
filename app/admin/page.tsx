@@ -1,9 +1,13 @@
-import React from 'react'
+import { AuthButton } from "@/components/auth-button";
+import Link from "next/link";
+import Navbar from "./component/Navbar-admin";
+import Announce from "./content/annouce-admin/page";
 
-function page() {
+export default function Home() {
   return (
-    <div>page</div>
-  )
-}
+    <main className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
+      <Announce/>
+    </main>
 
-export default page
+  );
+}
