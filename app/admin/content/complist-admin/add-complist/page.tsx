@@ -1,0 +1,218 @@
+"use client";
+
+import Navbar from "@/app/admin/component/Navbar-admin";
+import { useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+
+
+function Complist() {
+  const [announceDate, setAnnounceDate] = useState<Date>(new Date())
+  const [announceTitle, setAnnounceTitle] = useState("");
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const openModal = () => {
+    setShowConfirm(true);
+    requestAnimationFrame(() => setOpenConfirm(true));
+  };
+
+  const closeModal = () => {
+    setOpenConfirm(false);
+    setTimeout(() => setShowConfirm(false), 200); // ตรงกับ duration
+  };
+
+  const [announceDetail, setAnnounceDetail] = useState("");
+
+  const [errors, setErrors] = useState<{
+    title?: string;
+    detail?: string;
+  }>({});
+
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+
+    if (!announceTitle.trim()) {
+      newErrors.title = "กรุณากรอกชื่อประกาศ";
+    }
+
+    if (!announceDetail.trim()) {
+      newErrors.detail = "กรุณากรอกรายละเอียด";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+  return (
+    <>
+      <div className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
+
+        <div className="flex justify-start items-start mx-8 mt-3 mb-1 text-black text-2xl">
+          เพิ่มประกาศ
+        </div>
+
+        {/* กล่องฟอร์ม */}
+        <div className="bg-gray-200 mx-5 mt-2 rounded-md p-6">
+          <div className="bg-white rounded-md p-6 space-y-4">
+
+            {/* ชื่อประกาศ */}
+            <div>
+              <label className="block text-black mb-1">ชื่อประกาศ</label>
+              <Input
+              placeholder="ชื่อประกาศ"
+              value={announceTitle}
+              onChange={(e) => {
+                setAnnounceTitle(e.target.value);
+                setErrors((prev) => ({ ...prev, title: undefined }));
+              }}
+              className={cn(
+                errors.title
+                  ? "border-red-500 focus-visible:ring-red-600 focus-visible:border-red-600"
+                  : "border-gray-300 focus:border-gray-600 focus:ring-gray-600"
+              )}
+              />
+              {errors.title && (
+                <p className="mt-1 text-xs text-red-600">{errors.title}</p>
+              )}
+            </div>
+
+            {/* รายละเอียด */}
+            <div>
+              <label className="block text-black mb-1">รายละเอียด</label>
+              <textarea
+              value={announceDetail}
+              onChange={(e) => {
+                setAnnounceDetail(e.target.value);
+                setErrors((prev) => ({ ...prev, detail: undefined }));
+              }}
+              className={cn(
+                "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-gray-400 transition duration-150",
+                "focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-600",
+                errors.detail
+                ? "border-red-500 focus-visible:ring-red-600 focus-visible:border-red-600"
+                : "border-gray-300 focus:border-gray-600 focus:ring-gray-600"
+              )}
+              rows={4}
+              placeholder="รายละเอียด"
+              />
+              {errors.detail && (
+                <p className="text-xs text-red-600">{errors.detail}</p>
+              )}
+            </div>
+
+            {/* วันที่ประกาศ (ปฏิทินสวย) */}
+            <div>
+              <label className="block text-black mb-1">วันที่ประกาศ</label>
+                <DatePicker
+                  value={announceDate}
+                  onChange={setAnnounceDate}
+                />
+            </div>
+
+            {/* ปุ่ม */}
+            <div className="flex justify-end gap-3 pt-4">
+              <Link
+              href="/admin"
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+              >
+              ยกเลิก
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (validateForm()) {
+                    openModal();
+                  }
+                }}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                >
+                ยืนยันเพิ่มประกาศ
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+      {/* pop up */}
+{showConfirm && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    {/* backdrop */}
+    <div
+      onClick={closeModal}
+      className={cn(
+        "absolute inset-0 bg-black/40 transition-opacity duration-200",
+        openConfirm ? "opacity-100" : "opacity-0"
+      )}
+    />
+
+    {/* modal */}
+    <div
+      className={cn(
+        "relative bg-white rounded-2xl w-[350px] p-6 shadow-xl",
+        "transform transition-all duration-200 ease-out",
+        openConfirm
+          ? "opacity-100 scale-100 translate-y-0"
+          : "opacity-0 scale-95 translate-y-2"
+      )}
+    >
+      {/* content */}
+      <div className="text-gray-900 text-center text-lg font-medium mb-4">
+        ยืนยันเพิ่มประกาศ
+      </div>
+
+      <div className="border rounded-md px-3 py-2 text-sm text-gray-700 text-center space-y-1">
+        <div className="font-medium">{announceTitle || "—"}</div>
+        <div className="flex justify-center text-sm text-gray-500">
+          <span>{format(announceDate, "dd")}</span>
+          <span className="mx-0.5">/</span>
+          <span>{format(announceDate, "MM")}</span>
+          <span className="mx-0.5">/</span>
+          <span>{format(announceDate, "yyyy")}</span>
+        </div>
+      </div>
+
+      <div className="flex justify-center gap-3 mt-6">
+        <button
+          onClick={closeModal}
+          className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700"
+        >
+          ยกเลิก
+        </button>
+
+        <button
+          onClick={closeModal}
+          className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
+        >
+          ยืนยัน
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+    </>
+  );
+}
+
+
+
+export default Complist;

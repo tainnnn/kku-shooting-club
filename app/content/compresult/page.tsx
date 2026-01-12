@@ -24,7 +24,6 @@ function Compresult() {
     return (
       <>
         <div className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white ">
-            <Navbar />
 
                 <div className="flex justify-start items-start mx-8 mt-3 mb-1 text-black text-2xl">
                 ผลการแข่งขัน
