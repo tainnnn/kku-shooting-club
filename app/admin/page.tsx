@@ -5,7 +5,7 @@ import Announce from "./content/annouce-admin/page";
 
 export default function Home() {
   return (
-    <main className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
+    <main className="w-full bg-white">
       <Announce/>
     </main>
 

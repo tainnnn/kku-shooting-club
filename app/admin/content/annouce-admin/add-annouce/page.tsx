@@ -60,7 +60,7 @@ function Annouce() {
 
   return (
     <>
-      <div className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
+      <div className=" w-full flex flex-col overflow-x-hidden bg-white">
 
         <div className="flex justify-start items-start mx-8 mt-3 mb-1 text-black text-2xl">
           เพิ่มประกาศ
@@ -95,20 +95,25 @@ function Annouce() {
             <div>
               <label className="block text-black mb-1">รายละเอียด</label>
               <textarea
-              value={announceDetail}
-              onChange={(e) => {
-                setAnnounceDetail(e.target.value);
-                setErrors((prev) => ({ ...prev, detail: undefined }));
-              }}
-              className={cn(
-                "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-black placeholder-gray-400 transition duration-150",
-                "focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-600",
-                errors.detail
-                ? "border-red-500 focus-visible:ring-red-600 focus-visible:border-red-600"
-                : "border-gray-300 focus:border-gray-600 focus:ring-gray-600"
-              )}
-              rows={4}
-              placeholder="รายละเอียด"
+                value={announceDetail}
+                onChange={(e) => {
+                  setAnnounceDetail(e.target.value);
+                  setErrors((prev) => ({ ...prev, detail: undefined }));
+
+                  // auto grow
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${e.target.scrollHeight}px`;
+                }}
+                rows={4}
+                placeholder="รายละเอียด"
+                className={cn(
+                  "w-full rounded-lg border bg-white px-3 py-2 text-sm text-black placeholder-gray-400",
+                  "resize-none overflow-hidden transition duration-150",
+                  "focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-600",
+                  errors.detail
+                    ? "border-red-500 focus:ring-red-600 focus:border-red-600"
+                    : "border-gray-300"
+                )}
               />
               {errors.detail && (
                 <p className="text-xs text-red-600">{errors.detail}</p>
@@ -128,7 +133,7 @@ function Annouce() {
             <div className="flex justify-end gap-3 pt-4">
               <Link
               href="/admin"
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+              className="bg-gray-300 text-white px-4 py-2 rounded-md hover:bg-[#ADB1BA]"
               >
               ยกเลิก
               </Link>
@@ -182,25 +187,21 @@ function Annouce() {
       <div className="border rounded-md px-3 py-2 text-sm text-gray-700 text-center space-y-1">
         <div className="font-medium">{announceTitle || "—"}</div>
         <div className="flex justify-center text-sm text-gray-500">
-          <span>{format(announceDate, "dd")}</span>
-          <span className="mx-0.5">/</span>
-          <span>{format(announceDate, "MM")}</span>
-          <span className="mx-0.5">/</span>
-          <span>{format(announceDate, "yyyy")}</span>
+          <span>{format(announceDate, "dd/MM/yyyy")}</span>
         </div>
       </div>
 
       <div className="flex justify-center gap-3 mt-6">
         <button
           onClick={closeModal}
-          className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700"
+          className="flex-1 bg-gray-300 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out  hover:bg-[#ADB1BA]"
         >
           ยกเลิก
         </button>
 
         <button
           onClick={closeModal}
-          className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
+          className="flex-1 bg-green-500 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out  hover:bg-green-600"
         >
           ยืนยัน
         </button>

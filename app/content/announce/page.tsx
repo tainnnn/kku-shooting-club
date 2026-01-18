@@ -31,7 +31,7 @@ function Announce() {
             <span>
               {item.title} / ({item.date})
             </span>
-            <button className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-blue-400 hover:bg-blue-500">
+            <button className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-blue-400 transition-colors duration-150 ease-out  hover:bg-blue-500">
               รายละเอียด
             </button>
           </div>

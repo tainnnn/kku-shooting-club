@@ -38,7 +38,7 @@ function Compresult() {
                             {item.title} / ({item.date})
                         </span>
                         <div className="flex gap-2">
-                            <button className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-green-400 hover:bg-green-500">
+                            <button className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-green-400 transition-colors duration-150 ease-out  hover:bg-green-500">
                                 ผลการแข่งขัน
                             </button>
                         </div>
