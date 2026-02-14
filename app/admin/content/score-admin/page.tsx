@@ -20,7 +20,7 @@ const scoreKeys: ScoreKey[] = [5, 6, 7, 8, 9, 10];
 export default function ScoreAdminPage() {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
   const searchParams = useSearchParams();
