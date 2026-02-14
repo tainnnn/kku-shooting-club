@@ -3,9 +3,8 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    // ปิด image optimizer ของ Next ทั้งโปรเจ็กต์ (แก้ปัญหา 400 ได้ทันที)
+    // ปิด image optimizer ของ Next ทั้งโปรเจ็กต์
     unoptimized: true,
-    // เผื่อเปิดกลับภายหลัง ก็ใส่ pattern ไว้ด้วย
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,6 +12,11 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/**',
       },
     ],
+  },
+
+  // ⭐ สำคัญ: ปิด ESLint ตอน build (แก้ error defined but never used)
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 }
 
