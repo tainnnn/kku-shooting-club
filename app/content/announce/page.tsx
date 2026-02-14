@@ -1,10 +1,12 @@
 import React from "react";
 
-function Announce() {
-  // 🔹 ภายหลังค่อยเปลี่ยนเป็นดึงจาก backend
-  const announcements = [
+type Announcement = {
+  title: string;
+  date: string;
+};
 
-  ];
+function Announce() {
+  const announcements: Announcement[] = [];
 
   return (
     <>
