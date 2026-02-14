@@ -40,7 +40,7 @@ export default function AddComplist() {
   const [genderType, setGenderType] =
     useState<"male" | "female" | "mixed">("mixed");
 
-  const [price, setPrice] = useState<string>("300");
+  const [price, setPrice] = useState<number>(0);
   const [teamSize, setTeamSize] = useState<number>(4);
 
   const [showConfirm, setShowConfirm] = useState(false);
