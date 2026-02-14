@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
-import Navbar from "@/app/admin/component/Navbar-admin";
 
 /* ================= types ================= */
 type BaseCompetition = {
@@ -16,6 +15,7 @@ type ModeType = "individual" | "team" | "mixed";
 
 type ListItem = BaseCompetition & {
   mode: ModeType;
+  is_published: boolean;
 };
 
 export default function ListScoreAdminPage() {
@@ -37,6 +37,7 @@ export default function ListScoreAdminPage() {
           competition_name,
           competition_type,
           competition_gender,
+          is_published,
           created_at
         `
         )
@@ -44,12 +45,7 @@ export default function ListScoreAdminPage() {
 
       if (error || !data) return;
 
-      /**
-       * STEP 1:
-       * รวมข้อมูลให้เหลือแค่
-       * (ชื่อการแข่งขัน + ประเภท + เพศ)
-       */
-      const baseMap = new Map<string, BaseCompetition>();
+      const baseMap = new Map<string, BaseCompetition & { is_published: boolean }>();
 
       data.forEach((row) => {
         const key = `${row.competition_name}-${row.competition_type}-${row.competition_gender}`;
@@ -58,15 +54,11 @@ export default function ListScoreAdminPage() {
             competition_name: row.competition_name,
             competition_type: row.competition_type,
             competition_gender: row.competition_gender,
+            is_published: row.is_published ?? false,
           });
         }
       });
 
-      /**
-       * STEP 2:
-       * ต่อ 1 ชุด → สร้าง 3 item
-       * (บุคคล / ทีม / คู่ผสม)
-       */
       const finalItems: ListItem[] = [];
 
       baseMap.forEach((base) => {
@@ -109,34 +101,73 @@ export default function ListScoreAdminPage() {
     );
   };
 
+  const handleTogglePublish = async (item: ListItem) => {
+    const { error } = await supabase
+      .from("competition_scores")
+      .update({ is_published: !item.is_published })
+      .eq("competition_name", item.competition_name)
+      .eq("competition_type", item.competition_type)
+      .eq("competition_gender", item.competition_gender);
+
+    if (error) {
+      alert("เปลี่ยนสถานะไม่สำเร็จ");
+      return;
+    }
+
+    setItems((prev) =>
+      prev.map((i) =>
+        i.competition_name === item.competition_name &&
+        i.competition_type === item.competition_type &&
+        i.competition_gender === item.competition_gender
+          ? { ...i, is_published: !i.is_published }
+          : i
+      )
+    );
+  };
+
   /* ================= UI ================= */
   return (
-    <>
-      <div className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
-        <div className="flex justify-start items-start mx-8 mt-3 mb-1 text-black text-2xl">
-          ผลการลงคะแนน
-        </div>
-
-        <div className="bg-gray-200 mx-5 mt-2 rounded-md p-2">
-          {items.map((item, index) => (
-            <div
-              key={`${item.competition_name}-${item.competition_type}-${item.competition_gender}-${item.mode}-${index}`}
-              className="flex justify-between items-center md:text-xl text-sm text-black mx-2 border border-black bg-white my-3 px-2 py-3 rounded-md"
-            >
-              <span>{renderTitle(item)}</span>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleView(item)}
-                  className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-green-400 hover:bg-green-500"
-                >
-                  ดูผลการแข่งขัน
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="min-h-screen w-full flex flex-col overflow-x-hidden bg-white">
+      <div className="flex justify-start items-start mx-8 mt-3 mb-1 text-black text-2xl">
+        ผลการแข่งขัน
       </div>
-    </>
+
+      <div className="bg-gray-200 mx-5 mt-2 rounded-md p-2">
+        {items.length === 0 && (
+          <div className="mx-2 my-6 py-8 text-center text-gray-600 border border-dashed border-gray-400 rounded-md bg-white">
+            ยังไม่มีผลการแข่งขัน
+          </div>
+        )}
+
+        {items.map((item, index) => (
+          <div
+            key={`${item.competition_name}-${item.competition_type}-${item.competition_gender}-${item.mode}-${index}`}
+            className="flex justify-between items-center md:text-xl text-sm text-black mx-2 border border-black bg-white my-3 px-2 py-3 rounded-md"
+          >
+            <span>{renderTitle(item)}</span>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleView(item)}
+                className="flex md:text-sm text-xs border rounded px-2 py-1 text-white bg-green-400 hover:bg-green-500"
+              >
+                ดูผลการแข่งขัน
+              </button>
+
+              <button
+                onClick={() => handleTogglePublish(item)}
+                className={`flex md:text-sm text-xs border rounded px-2 py-1 text-white ${
+                  item.is_published
+                    ? "bg-red-400 hover:bg-red-500"
+                    : "bg-blue-400 hover:bg-blue-500"
+                }`}
+              >
+                {item.is_published ? "ลบประกาศ" : "ประกาศผล"}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

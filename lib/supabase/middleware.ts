@@ -1,8 +1,8 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
-export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next();
+export async function middleware(request: NextRequest) {
+  const response = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,8 +27,31 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // 🔑 สำคัญมาก: ต้องเรียกเพื่อ refresh session
-  await supabase.auth.getUser();
+  // 🔒 ต้อง login
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
+  // 🔒 admin only
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    const { data, error } = await supabase
+      .from("user")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (error || !data || data.role !== "admin") {
+      return NextResponse.redirect(new URL("/403", request.url));
+    }
+  }
 
   return response;
 }
+
+export const config = {
+  matcher: ["/admin/:path*"],
+};

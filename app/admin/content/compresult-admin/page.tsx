@@ -92,12 +92,6 @@ function Compresult() {
                 >
                   แก้ไข
                 </button>
-
-                <button
-                  className="flex md:text-sm text-xs border rounded mx-2 px-2 py-1 text-white bg-green-400 hover:bg-green-500"
-                >
-                  ประกาศ
-                </button>
               </div>
             </div>
           ))}

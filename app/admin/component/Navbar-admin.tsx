@@ -61,7 +61,7 @@ const navLinks = [
     },
     {
       href: '/admin/content/list-score-admin',
-      label: 'ผลการลงคะแนน',
+      label: 'ผลการแข่งขัน',
       match: ['/admin/content/list-score-admin'],
     },
 ];
