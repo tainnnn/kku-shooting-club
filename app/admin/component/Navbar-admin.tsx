@@ -39,16 +39,16 @@ const navLinks = [
       label: 'ประกาศ',
       match: ['/admin/content/annouce-admin','/admin'],
     },
-    {
-      href: '/admin/content/complist-admin',
-      label: 'รายการแข่งขัน',
-      match: ['/admin/content/complist-admin'],
-    },
-    {
-      href: '/admin/content/checkreg-admin',
-      label: 'ตรวจสอบการสมัคร',
-      match: ['/admin/content/checkreg-admin'],
-    },
+    // {
+    //   href: '/admin/content/complist-admin',
+    //   label: 'รายการแข่งขัน',
+    //   match: ['/admin/content/complist-admin'],
+    // },
+    // {
+    //   href: '/admin/content/checkreg-admin',
+    //   label: 'ตรวจสอบการสมัคร',
+    //   match: ['/admin/content/checkreg-admin'],
+    // },
     {
       href: '/admin/content/score-admin',
       label: 'ลงคะแนน',
@@ -56,8 +56,13 @@ const navLinks = [
     },
     {
       href: '/admin/content/compresult-admin',
-      label: 'ผลการแข่งขัน',
+      label: 'ผลการลงคะแนน',
       match: ['/admin/content/compresult-admin'],
+    },
+    {
+      href: '/admin/content/list-score-admin',
+      label: 'ผลการลงคะแนน',
+      match: ['/admin/content/list-score-admin'],
     },
 ];
 
@@ -214,7 +219,7 @@ function Navbar() {
                   leading-tight
                 "
               >
-                KKU OPEN SHOOTING CLUB
+                KKU GAMES SHOOTING CLUB - ADMIN
               </h1>
 
               <div className="mt-2 flex items-center gap-3 text-white/80">

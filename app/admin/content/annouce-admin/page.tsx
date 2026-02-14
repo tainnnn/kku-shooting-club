@@ -6,18 +6,7 @@ import { cn } from "@/lib/utils";
 
 function Announce() {
   const announcements = [
-    {
-      title: "กฎการแข่งขัน (ยิงปืนเดี่ยวชาย)",
-      date: "10/11/2026 - 20/11/2026",
-    },
-    {
-      title: "กฎการแข่งขัน (ยิงปืนทีม)",
-      date: "21/11/2026 - 25/11/2026",
-    },
-    {
-      title: "ตารางแข่งขันรอบชิงชนะเลิศ",
-      date: "26/11/2026",
-    },
+
   ];
 
   /** popup state */
@@ -43,7 +32,6 @@ function Announce() {
   };
 
   const handleDelete = () => {
-    // 👉 ตรงนี้เอาไปต่อ API ลบจริงภายหลังได้
     console.log("delete:", selectedItem);
     closeModal();
   };
@@ -53,7 +41,7 @@ function Announce() {
       {/* ปุ่มเพิ่มประกาศ */}
       <div className="flex justify-start items-start mx-7 mt-3 mb-1 text-black text-2xl">
         <Link href="/admin/content/annouce-admin/add-annouce">
-          <button className="flex md:text-sm text-xs border rounded mx-2 mb-1 px-2 py-1 text-white bg-green-500 transition-colors duration-150 ease-out  hover:bg-green-600">
+          <button className="flex md:text-sm text-xs border rounded mx-2 mb-1 px-2 py-1 text-white bg-green-500 transition-colors duration-150 ease-out hover:bg-green-600">
             เพิ่มประกาศ
           </button>
         </Link>
@@ -61,6 +49,12 @@ function Announce() {
 
       {/* list */}
       <div className="bg-gray-200 mx-5 mt-2 rounded-md p-2">
+        {announcements.length === 0 && (
+          <div className="mx-2 my-6 py-8 text-center text-gray-600 border border-dashed border-gray-400 rounded-md bg-white">
+            ยังไม่มีประกาศ
+          </div>
+        )}
+
         {announcements.map((item, index) => (
           <div
             key={index}
@@ -71,13 +65,13 @@ function Announce() {
             </span>
 
             <div className="flex gap-2">
-              <button className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-blue-400 transition-colors duration-150 ease-out  hover:bg-blue-500">
+              <button className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-blue-400 transition-colors duration-150 ease-out hover:bg-blue-500">
                 รายละเอียด
               </button>
 
               <button
                 onClick={() => openModal(item)}
-                className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-red-600 transition-colors duration-150 ease-out  hover:bg-red-700"
+                className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-red-600 transition-colors duration-150 ease-out hover:bg-red-700"
               >
                 ลบประกาศ
               </button>
@@ -121,21 +115,19 @@ function Announce() {
               </div>
             </div>
 
-            {/* 🔁 สลับตำแหน่งปุ่ม */}
             <div className="flex justify-center gap-3 mt-6">
               <button
                 onClick={closeModal}
-                className="flex-1 bg-gray-300 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out  hover:bg-[#ADB1BA]"
+                className="flex-1 bg-gray-300 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out hover:bg-[#ADB1BA]"
               >
                 ยกเลิก
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out  hover:bg-red-700"
+                className="flex-1 bg-red-600 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out hover:bg-red-700"
               >
                 ยืนยันการลบ
               </button>
-
             </div>
           </div>
         </div>

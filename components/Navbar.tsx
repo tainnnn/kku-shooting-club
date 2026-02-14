@@ -11,8 +11,8 @@ import { motion } from 'framer-motion'
 
 const navLinks = [
   { href: '/', label: 'ประกาศ' },
-  { href: '/content/complist', label: 'รายการแข่งขัน' },
-  { href: '/content/myreg', label: 'ใบสมัครของฉัน' },
+  // { href: '/content/complist', label: 'รายการแข่งขัน' },
+  // { href: '/content/myreg', label: 'ใบสมัครของฉัน' },
   { href: '/content/compresult', label: 'ผลการแข่งขัน' },
   { href: '/content/contact', label: 'ติดต่อ' },
 ]
@@ -156,7 +156,7 @@ function Navbar() {
 
             <div className="min-w-0">
               <h1 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold tracking-wide drop-shadow leading-tight">
-                KKU OPEN SHOOTING CLUB
+                KKU GAMES SHOOTING CLUB
               </h1>
               <div className="mt-2 flex items-center gap-3 text-white/80">
                 <span className="h-[1px] w-10 md:w-14 bg-white/30" />
