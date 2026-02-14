@@ -283,7 +283,7 @@ export default function AddComplist() {
                 value={price}
                 onChange={(e) => {
                   const value = e.target.value.replace(/[^0-9]/g, "");
-                  setPrice(value);
+                  setPrice(Number(value || 0));
                 }}
               />
             </div>
