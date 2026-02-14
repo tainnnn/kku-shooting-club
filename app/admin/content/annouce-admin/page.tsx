@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-function Announce() {
-  const announcements = [
+type Announcement = {
+  title: string;
+  date: string;
+};
 
-  ];
+function Announce() {
+  const announcements: Announcement[] = [];
 
   /** popup state */
   const [showConfirm, setShowConfirm] = useState(false);
