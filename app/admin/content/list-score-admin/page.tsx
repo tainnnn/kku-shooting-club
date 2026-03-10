@@ -142,11 +142,16 @@ export default function ListScoreAdminPage() {
 
   const handleView = (item: ListItem) => {
 
-    router.push(
+    const base =
       `/admin/content/list-score-admin/view-score-admin?name=${encodeURIComponent(
         item.competition_name
-      )}&type=${item.competition_type}&gender=${item.competition_gender}&mode=${item.mode}`
-    );
+      )}&type=${item.competition_type}&mode=${item.mode}`;
+
+    if (item.mode === "mixed") {
+      router.push(base);
+    } else {
+      router.push(`${base}&gender=${item.competition_gender}`);
+    }
 
   };
 
