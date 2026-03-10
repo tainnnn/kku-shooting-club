@@ -1,26 +1,110 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { createBrowserClient } from "@supabase/ssr";
+import { format } from "date-fns";
 
 type Announcement = {
+  id: string;
   title: string;
+  detail: string;
   date: string;
 };
 
 function Announce() {
-  const announcements: Announcement[] = [];
 
-  /** popup state */
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+
+  /** popup delete */
   const [showConfirm, setShowConfirm] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<{
-    title: string;
-    date: string;
-  } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Announcement | null>(null);
 
-  const openModal = (item: any) => {
+  /** popup detail */
+  const [showDetail, setShowDetail] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState<Announcement | null>(null);
+
+  /* ================= detect link ================= */
+
+  const renderTextWithLinks = (text: string) => {
+
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+
+      if (part.match(urlRegex)) {
+
+        const href = part.startsWith("http")
+          ? part
+          : `https://${part}`;
+
+        return (
+          <a
+            key={index}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline break-all"
+          >
+            {part}
+          </a>
+        );
+
+      }
+
+      return part;
+
+    });
+
+  };
+
+  /* ================= load announcements ================= */
+
+  const fetchAnnouncements = async () => {
+
+    const { data, error } = await supabase
+      .from("announcements")
+      .select(`
+        id,
+        title,
+        detail_url,
+        announce_at
+      `)
+      .order("announce_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const formatted = data.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      detail: item.detail_url,
+      date: format(new Date(item.announce_at), "dd/MM/yyyy")
+    }));
+
+    setAnnouncements(formatted);
+
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
+  /* ================= delete ================= */
+
+  const openModal = (item: Announcement) => {
     setSelectedItem(item);
     setShowConfirm(true);
     requestAnimationFrame(() => setOpenConfirm(true));
@@ -34,59 +118,108 @@ function Announce() {
     }, 200);
   };
 
-  const handleDelete = () => {
-    console.log("delete:", selectedItem);
+  const handleDelete = async () => {
+
+    if (!selectedItem) return;
+
+    const { error } = await supabase
+      .from("announcements")
+      .delete()
+      .eq("id", selectedItem.id);
+
+    if (error) {
+      console.error(error);
+      alert("ลบประกาศไม่สำเร็จ");
+      return;
+    }
+
+    await fetchAnnouncements();
+
     closeModal();
+  };
+
+  /* ================= detail ================= */
+
+  const openDetailModal = (item: Announcement) => {
+    setSelectedDetail(item);
+    setShowDetail(true);
+    requestAnimationFrame(() => setOpenDetail(true));
+  };
+
+  const closeDetailModal = () => {
+    setOpenDetail(false);
+    setTimeout(() => {
+      setShowDetail(false);
+      setSelectedDetail(null);
+    }, 200);
   };
 
   return (
     <>
+
       {/* ปุ่มเพิ่มประกาศ */}
       <div className="flex justify-start items-start mx-7 mt-3 mb-1 text-black text-2xl">
+
         <Link href="/admin/content/annouce-admin/add-annouce">
-          <button className="flex md:text-sm text-xs border rounded mx-2 mb-1 px-2 py-1 text-white bg-green-500 transition-colors duration-150 ease-out hover:bg-green-600">
+          <button className="flex md:text-sm text-xs border rounded mx-2 mb-1 px-2 py-1 text-white bg-green-500 hover:bg-green-600">
             เพิ่มประกาศ
           </button>
         </Link>
+
       </div>
 
       {/* list */}
       <div className="bg-gray-200 mx-5 mt-2 rounded-md p-2">
+
         {announcements.length === 0 && (
+
           <div className="mx-2 my-6 py-8 text-center text-gray-600 border border-dashed border-gray-400 rounded-md bg-white">
             ยังไม่มีประกาศ
           </div>
+
         )}
 
-        {announcements.map((item, index) => (
+        {announcements.map((item) => (
+
           <div
-            key={index}
+            key={item.id}
             className="flex justify-between items-center md:text-xl text-sm text-black mx-2 border border-black bg-white my-3 px-2 py-3 rounded-md"
           >
+
             <span>
               {item.title} / ({item.date})
             </span>
 
             <div className="flex gap-2">
-              <button className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-blue-400 transition-colors duration-150 ease-out hover:bg-blue-500">
+
+              <button
+                onClick={() => openDetailModal(item)}
+                className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-blue-400 hover:bg-blue-500"
+              >
                 รายละเอียด
               </button>
 
               <button
                 onClick={() => openModal(item)}
-                className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-red-600 transition-colors duration-150 ease-out hover:bg-red-700"
+                className="md:text-sm text-xs border rounded px-2 py-1 text-white bg-red-600 hover:bg-red-700"
               >
                 ลบประกาศ
               </button>
+
             </div>
+
           </div>
+
         ))}
+
       </div>
 
       {/* ===== popup ลบประกาศ ===== */}
+
       {showConfirm && (
+
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* backdrop */}
+
           <div
             onClick={closeModal}
             className={cn(
@@ -95,7 +228,6 @@ function Announce() {
             )}
           />
 
-          {/* modal */}
           <div
             className={cn(
               "relative bg-white rounded-2xl w-[350px] p-6 shadow-xl",
@@ -105,36 +237,97 @@ function Announce() {
                 : "opacity-0 scale-95 translate-y-2"
             )}
           >
+
             <div className="text-gray-900 text-center text-lg font-medium mb-4">
               ยืนยันลบประกาศ
             </div>
 
             <div className="border rounded-md px-3 py-2 text-sm text-gray-700 text-center space-y-1">
+
               <div className="font-medium">
                 {selectedItem?.title || "—"}
               </div>
+
               <div className="text-gray-500">
                 {selectedItem?.date}
               </div>
+
             </div>
 
             <div className="flex justify-center gap-3 mt-6">
+
               <button
                 onClick={closeModal}
-                className="flex-1 bg-gray-300 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out hover:bg-[#ADB1BA]"
+                className="flex-1 bg-gray-300 text-white px-6 py-2 rounded-md hover:bg-[#ADB1BA]"
               >
                 ยกเลิก
               </button>
+
               <button
                 onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white px-6 py-2 rounded-md transition-colors duration-150 ease-out hover:bg-red-700"
+                className="flex-1 bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700"
               >
                 ยืนยันการลบ
               </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
+
+      {/* ===== popup รายละเอียด ===== */}
+
+      {showDetail && (
+
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+          <div
+            onClick={closeDetailModal}
+            className={cn(
+              "absolute inset-0 bg-black/40 transition-opacity duration-200",
+              openDetail ? "opacity-100" : "opacity-0"
+            )}
+          />
+
+          <div
+            className={cn(
+              "relative bg-white rounded-2xl w-[420px] p-6 shadow-xl",
+              "transform transition-all duration-200 ease-out",
+              openDetail
+                ? "opacity-100 scale-100 translate-y-0"
+                : "opacity-0 scale-95 translate-y-2"
+            )}
+          >
+
+            <div className="text-gray-900 text-center text-lg font-medium mb-4">
+              {selectedDetail?.title}
+            </div>
+
+            <div className="text-sm text-gray-700 whitespace-pre-line border rounded-md p-3 mb-4">
+              {selectedDetail?.detail &&
+                renderTextWithLinks(selectedDetail.detail)}
+            </div>
+
+            <div className="text-center text-gray-500 text-sm mb-4">
+              {selectedDetail?.date}
+            </div>
+
+            <button
+              onClick={closeDetailModal}
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            >
+              ปิด
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
+
     </>
   );
 }

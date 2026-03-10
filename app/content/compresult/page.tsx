@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
-import Navbar from "@/components/Navbar";
 
 /* ================= types ================= */
 type BaseCompetition = {
@@ -18,7 +17,6 @@ type ListItem = BaseCompetition & {
   mode: ModeType;
 };
 
-/* ================= page ================= */
 export default function Compresult() {
   const router = useRouter();
   const supabase = createBrowserClient(
@@ -34,14 +32,12 @@ export default function Compresult() {
     const fetchData = async () => {
       const { data, error } = await supabase
         .from("competition_scores")
-        .select(
-          `
+        .select(`
           competition_name,
           competition_type,
           competition_gender,
           created_at
-        `
-        )
+        `)
         .eq("is_published", true)
         .order("created_at", { ascending: false });
 
@@ -51,11 +47,11 @@ export default function Compresult() {
         return;
       }
 
-      // รวมข้อมูลซ้ำให้เหลือชุดเดียว
       const baseMap = new Map<string, BaseCompetition>();
 
       data.forEach((row) => {
         const key = `${row.competition_name}-${row.competition_type}-${row.competition_gender}`;
+
         if (!baseMap.has(key)) {
           baseMap.set(key, {
             competition_name: row.competition_name,
@@ -64,16 +60,41 @@ export default function Compresult() {
           });
         }
       });
-
-      // สร้าง 3 โหมด (บุคคล / ทีม / คู่ผสม)
+      
       const finalItems: ListItem[] = [];
+      const mixedAdded = new Set<string>();
 
       baseMap.forEach((base) => {
-        finalItems.push(
-          { ...base, mode: "individual" },
-          { ...base, mode: "team" },
-          { ...base, mode: "mixed" }
-        );
+
+        // individual
+        finalItems.push({
+          ...base,
+          mode: "individual"
+        });
+
+        // team
+        finalItems.push({
+          ...base,
+          mode: "team"
+        });
+
+        // mixed (สร้างครั้งเดียวต่อ type)
+        const mixedKey =
+          `${base.competition_name}-${base.competition_type}`;
+
+        if (!mixedAdded.has(mixedKey)) {
+
+          finalItems.push({
+            competition_name: base.competition_name,
+            competition_type: base.competition_type,
+            competition_gender: base.competition_gender,
+            mode: "mixed"
+          });
+
+          mixedAdded.add(mixedKey);
+
+        }
+
       });
 
       setItems(finalItems);
@@ -87,6 +108,7 @@ export default function Compresult() {
   const renderTitle = (item: ListItem) => {
     const typeLabel =
       item.competition_type === "prone" ? "ท่านอน" : "ท่านั่ง";
+
     const genderLabel =
       item.competition_gender === "male" ? "ชาย" : "หญิง";
 
@@ -118,6 +140,7 @@ export default function Compresult() {
       </div>
 
       <div className="bg-gray-200 mx-5 mt-2 rounded-md p-2">
+
         {loading && (
           <div className="mx-2 my-6 py-8 text-center text-gray-500">
             กำลังโหลดผลการแข่งขัน...
@@ -131,10 +154,12 @@ export default function Compresult() {
         )}
 
         {items.map((item, index) => (
+
           <div
             key={`${item.competition_name}-${item.competition_type}-${item.competition_gender}-${item.mode}-${index}`}
             className="flex justify-between items-center md:text-xl text-sm text-black mx-2 border border-black bg-white my-3 px-2 py-3 rounded-md"
           >
+
             <span>{renderTitle(item)}</span>
 
             <button
@@ -143,9 +168,13 @@ export default function Compresult() {
             >
               ดูผลการแข่งขัน
             </button>
+
           </div>
+
         ))}
+
       </div>
+
     </div>
   );
 }

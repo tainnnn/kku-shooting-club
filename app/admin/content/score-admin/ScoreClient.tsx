@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { SelectBox } from "@/components/ui/select-box";
 
 /* ================= types ================= */
-type ScoreKey = 5 | 6 | 7 | 8 | 9 | 10;
+type ScoreKey = 5 | 6 | 7 | 8 | 9 | 10 | "x";
 
 type RowData = {
   faculty: string;
@@ -15,7 +15,7 @@ type RowData = {
   scores: Record<ScoreKey, string>;
 };
 
-const scoreKeys: ScoreKey[] = [5, 6, 7, 8, 9, 10];
+const scoreKeys: ScoreKey[] = [5, 6, 7, 8, 9, 10, "x"];
 
 export default function ScoreAdminPage() {
   const supabase = createBrowserClient(
@@ -30,13 +30,11 @@ export default function ScoreAdminPage() {
 
   /* ---------- header state ---------- */
   const [competitionName, setCompetitionName] = useState("");
-
   const [competitionType, setCompetitionType] =
-    useState<"prone" | "sitting">("prone");
+    useState<"prone" | "sitting" | "prone_50m">("sitting");
 
   const [genderType, setGenderType] =
     useState<"male" | "female">("male");
-
   const [isSaving, setIsSaving] = useState(false);
 
   /* ---------- competition id ---------- */
@@ -49,16 +47,24 @@ export default function ScoreAdminPage() {
     {
       faculty: "",
       name: "",
-      scores: { 5: "", 6: "", 7: "", 8: "", 9: "", 10: "" },
+      scores: {
+        5: "",
+        6: "",
+        7: "",
+        8: "",
+        9: "",
+        10: "",
+        x: "",
+      },
     },
   ]);
 
   /* ---------- utils ---------- */
   const calcTotal = (scores: RowData["scores"]) =>
-    scoreKeys.reduce(
-      (sum, k) => sum + (Number(scores[k]) || 0) * k,
-      0
-    );
+    scoreKeys.reduce((sum, k) => {
+      if (k === "x") return sum;
+      return sum + (Number(scores[k]) || 0) * k;
+    }, 0);
 
   /* ---------- row actions ---------- */
   const addRow = () => {
@@ -67,7 +73,15 @@ export default function ScoreAdminPage() {
       {
         faculty: "",
         name: "",
-        scores: { 5: "", 6: "", 7: "", 8: "", 9: "", 10: "" },
+        scores: {
+          5: "",
+          6: "",
+          7: "",
+          8: "",
+          9: "",
+          10: "",
+          x: "",
+        },
       },
     ]);
   };
@@ -133,6 +147,7 @@ export default function ScoreAdminPage() {
             8: row.score8 ? String(row.score8) : "",
             9: row.score9 ? String(row.score9) : "",
             10: row.score10 ? String(row.score10) : "",
+            x: row.score_x ? String(row.score_x) : "",
           },
         }))
       );
@@ -172,14 +187,13 @@ export default function ScoreAdminPage() {
         score8: Number(row.scores[8]) || 0,
         score9: Number(row.scores[9]) || 0,
         score10: Number(row.scores[10]) || 0,
+        score_x: Number(row.scores.x) || 0,
         total_score: calcTotal(row.scores),
       }));
 
       await supabase.from("competition_scores").insert(payload);
 
       alert("บันทึกคะแนนเรียบร้อยแล้ว ✅");
-
-      // ✅ redirect กลับหน้าผลการแข่งขัน
       router.push("/admin/content/compresult-admin");
     } catch (err) {
       console.error(err);
@@ -210,15 +224,18 @@ export default function ScoreAdminPage() {
             ประเภทการแข่งขัน
           </label>
           <SelectBox
-            width="w-[145px]"
-            value={competitionType}
-            options={[
-              { label: "ท่านอน", value: "prone" },
-              { label: "ท่านั่ง", value: "sitting" },
-            ]}
-            onChange={(v) =>
-              setCompetitionType(v as "prone" | "sitting")
-            }
+          width="w-[145px]"
+          value={competitionType}
+          options={[
+            { label: "ท่านั่ง", value: "sitting" },
+            { label: "ท่านอน", value: "prone" },
+            { label: "ท่านอน 50 เมตร", value: "prone_50m" },
+          ]}
+          onChange={(v) =>
+            setCompetitionType(
+              v as "prone" | "sitting" | "prone_50m"
+            )
+          }
           />
         </div>
 
@@ -250,11 +267,11 @@ export default function ScoreAdminPage() {
               ชื่อ-นามสกุล
             </th>
 
-            {scoreKeys.map((k) => (
-              <th key={k} className="border border-black w-[80px]">
-                {k}
-              </th>
-            ))}
+              {scoreKeys.map((k) => (
+                <th key={k} className="border border-black w-[80px]">
+                  {k === "x" ? "X" : k}
+                </th>
+              ))}
 
             <th className="border border-black w-[80px]">
               TOTAL
