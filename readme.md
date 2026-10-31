@@ -1,6 +1,6 @@
 # KKU Open Shooting Club
 
-A collaborative web application prototype intended for KKU Open Shooting Club. Development was completed, but the application was never used in actual club operations.
+A team-developed web application prototype for KKU Open Shooting Club, designed to publish competition announcements, manage registrations, and display results. Development was completed, but the application was never used in actual club operations.
 
 This repository is preserved for portfolio purposes with the original repository owner's permission. It retains the original Git history and contributor attribution.
 
